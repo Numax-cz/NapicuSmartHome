@@ -17,36 +17,38 @@ struct PeripheralDisplayItem {
     let uuid: UUID
 }
 
-class BluetoothManager: NSObject, ObservableObject {
+class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
     private var centralManager: CBCentralManager?
     private var foundPeripherals: [DiscoveredPeripheral] = []
 
-    var targetUUID = CBUUID(string: "cea986c2-4405-11ee-be56-0242ac120002")
-    
-    @Published var peripheralsNames: [PeripheralDisplayItem] = [
-        PeripheralDisplayItem(name: "Device #1", uuid: UUID()),
-        PeripheralDisplayItem(name: "Device #2", uuid: UUID()),
-        PeripheralDisplayItem(name: "Device #3", uuid: UUID()),
-    ]
-    @Published var scanning: Bool = false
-
+    private var allowedUUIDS = [CBUUID(string: "cea986c2-4405-11ee-be56-0242ac120002")]
     
     private var timer: Timer?
     
- 
+    @Published var foundPeripheralsNames: [PeripheralDisplayItem] = [
+        PeripheralDisplayItem(name: "Device #1", uuid: UUID()),
+        PeripheralDisplayItem(name: "Device #2", uuid: UUID()),
+        PeripheralDisplayItem(name: "Device #3", uuid: UUID()),
+        PeripheralDisplayItem(name: "Device #3", uuid: UUID())
+    ]
+    @Published var scanning: Bool = false
+
     override init() {
         super.init()
         self.centralManager = CBCentralManager(delegate: self, queue: .main)
     }
     
     func startScan() {
-        self.scanning = true
         if(!self.scanning && centralManager?.state == .poweredOn) {
             self.centralManager?.scanForPeripherals(withServices: nil)
+            self.scanning = true
          
-
             self.timer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
                 self?.updateScan()
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { [weak self] in
+                self?.stopScan()
             }
         }
     }
@@ -68,7 +70,7 @@ class BluetoothManager: NSObject, ObservableObject {
             foundPeripherals.removeAll { peripheral in
                 let isExpired = currentDate.timeIntervalSince(peripheral.lastUpdate) > 3.0
                 if isExpired {
-                    peripheralsNames.removeAll { $0.name == peripheral.peripheral.name }
+                    foundPeripheralsNames.removeAll { $0.name == peripheral.peripheral.name }
                     print("Removed \(peripheral.peripheral.name ?? "Unknown")")
                 }
                 return isExpired
@@ -78,6 +80,18 @@ class BluetoothManager: NSObject, ObservableObject {
             self.centralManager?.scanForPeripherals(withServices: nil)
         }
     }
+    
+    func connectToPeripheral(with uuid: UUID) {
+        self.stopScan()
+        guard let discoveredPeripheral = foundPeripherals.first(where: { $0.peripheral.identifier == uuid }) else {
+            return
+        }
+        
+//        self.centralManager?.connect(discoveredPeripheral.peripheral, options: nil)
+//        discoveredPeripheral.peripheral.delegate = self
+    }
+    
+    
 
 }
 
@@ -85,7 +99,6 @@ extension BluetoothManager: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
 
     }
-    
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber)
     {
@@ -95,14 +108,13 @@ extension BluetoothManager: CBCentralManagerDelegate {
         }
 
         if let serviceUUIDs = advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] {
-            if serviceUUIDs.contains(targetUUID) {
+            if serviceUUIDs.contains(where: { allowedUUIDS.contains($0) }) {
                 if let name = peripheral.name {
                     foundPeripherals.append(DiscoveredPeripheral(peripheral: peripheral, lastUpdate: Date()))
                     
-                    peripheralsNames.append(PeripheralDisplayItem(name: name, uuid: peripheral.identifier))
+                    foundPeripheralsNames.append(PeripheralDisplayItem(name: name, uuid: peripheral.identifier))
                 }
             }
         }
     }
-    
 }

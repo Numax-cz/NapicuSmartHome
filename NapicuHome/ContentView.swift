@@ -59,7 +59,7 @@ struct ContentView: View {
                     VStack {
                         ScrollView {
                             VStack {
-                                ForEach(bluetoothManager.peripheralsNames, id: \.uuid) { device in
+                                ForEach(bluetoothManager.foundPeripheralsNames, id: \.uuid) { device in
                                     Button(action: {}) {
                                         Text(device.name)
                                             .fontWeight(.bold)
