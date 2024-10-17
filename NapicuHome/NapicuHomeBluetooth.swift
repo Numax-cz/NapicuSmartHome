@@ -12,13 +12,22 @@ struct DiscoveredPeripheral {
     var lastUpdate: Date
 }
 
+struct PeripheralDisplayItem {
+    let name: String
+    let uuid: UUID
+}
+
 class BluetoothManager: NSObject, ObservableObject {
     private var centralManager: CBCentralManager?
     private var foundPeripherals: [DiscoveredPeripheral] = []
 
     var targetUUID = CBUUID(string: "cea986c2-4405-11ee-be56-0242ac120002")
     
-    @Published var peripheralsNames: [String] = ["Device #1", "Device #2", "Device #3"]
+    @Published var peripheralsNames: [PeripheralDisplayItem] = [
+        PeripheralDisplayItem(name: "Device #1", uuid: UUID()),
+        PeripheralDisplayItem(name: "Device #2", uuid: UUID()),
+        PeripheralDisplayItem(name: "Device #3", uuid: UUID()),
+    ]
     @Published var scanning: Bool = false
 
     
@@ -59,7 +68,7 @@ class BluetoothManager: NSObject, ObservableObject {
             foundPeripherals.removeAll { peripheral in
                 let isExpired = currentDate.timeIntervalSince(peripheral.lastUpdate) > 3.0
                 if isExpired {
-                    peripheralsNames.removeAll { $0 == peripheral.peripheral.name }
+                    peripheralsNames.removeAll { $0.name == peripheral.peripheral.name }
                     print("Removed \(peripheral.peripheral.name ?? "Unknown")")
                 }
                 return isExpired
@@ -90,7 +99,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
                 if let name = peripheral.name {
                     foundPeripherals.append(DiscoveredPeripheral(peripheral: peripheral, lastUpdate: Date()))
                     
-                    peripheralsNames.append(name)
+                    peripheralsNames.append(PeripheralDisplayItem(name: name, uuid: peripheral.identifier))
                 }
             }
         }
