@@ -31,7 +31,10 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
         PeripheralDisplayItem(name: "Device #3", uuid: UUID()),
         PeripheralDisplayItem(name: "Device #3", uuid: UUID())
     ]
-    @Published var scanning: Bool = false
+    
+    @Published var scanning: Bool = true
+    
+    @Published var noAvailableDevices: Bool = false
 
     override init() {
         super.init()
