@@ -25,15 +25,22 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
     
     private var timer: Timer?
     
-    @Published var foundPeripheralsNames: [PeripheralDisplayItem] = [
-        PeripheralDisplayItem(name: "Device #1", uuid: UUID()),
-        PeripheralDisplayItem(name: "Device #2", uuid: UUID()),
-        PeripheralDisplayItem(name: "Device #3", uuid: UUID()),
-        PeripheralDisplayItem(name: "Device #3", uuid: UUID())
-    ]
+    @Published var foundPeripheralsNames: [PeripheralDisplayItem] = {
+            #if targetEnvironment(simulator)
+                return [
+                    //For debugging
+                    PeripheralDisplayItem(name: "NapicuHome #1", uuid: UUID()),
+                    PeripheralDisplayItem(name: "NapicuHome #2", uuid: UUID()),
+                    PeripheralDisplayItem(name: "NapicuHome #3", uuid: UUID()),
+                    PeripheralDisplayItem(name: "NapicuHome #4", uuid: UUID()),
+                ]
+            #else
+                return []
+            #endif
+            }()
     
-    @Published var scanning: Bool = true
-    
+    @Published var scanning: Bool = false
+
     @Published var noAvailableDevices: Bool = false
 
     override init() {
@@ -42,6 +49,9 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
     }
     
     func startScan() {
+        #if targetEnvironment(simulator)
+            self.scanning = true
+        #endif
         if(!self.scanning && centralManager?.state == .poweredOn) {
             self.centralManager?.scanForPeripherals(withServices: nil)
             self.scanning = true
@@ -90,8 +100,8 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
             return
         }
         
-//        self.centralManager?.connect(discoveredPeripheral.peripheral, options: nil)
-//        discoveredPeripheral.peripheral.delegate = self
+        self.centralManager?.connect(discoveredPeripheral.peripheral, options: nil)
+        discoveredPeripheral.peripheral.delegate = self
     }
     
     
@@ -120,4 +130,31 @@ extension BluetoothManager: CBCentralManagerDelegate {
             }
         }
     }
+    
+  
+    
+    // Successful
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+        print("Successfully connected to the device: \(peripheral.name ?? "unknown device")")
+        peripheral.discoverServices(nil)
+    }
+
+    // Failed
+    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+        if let error = error {
+            print("Connection failed: \(error.localizedDescription)")
+        } else {
+            print("Failed to connect to the device.")
+        }
+    }
+
+    // Disconnected
+    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+        if let error = error {
+            print("Device disconnected with error: \(error.localizedDescription)")
+        } else {
+            print("Device was disconnected.")
+        }
+    }
+
 }

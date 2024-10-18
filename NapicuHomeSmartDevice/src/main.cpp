@@ -1,27 +1,22 @@
-#include <Arduino.h>
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEServer.h>
+
+#include <include/main.h>
 
 
-#define SERVICE_UUID        "cea986c2-4405-11ee-be56-0242ac120002" 
-#define CHARACTERISTIC_UUID "fe3c2e25-cfba-4019-b1bf-adb18fded0cc"
+#define SERVICE_UUID "cea986c2-4405-11ee-be56-0242ac120002" 
+
 
 void setup() {
   Serial.begin(9600);
 
   Serial.println("Starting BLE work!");
 
-  BLEDevice::init("NapicuSmartHomeLOL");
+  BLEDevice::init(DEFAULT_BLE_NAME);
   BLEServer *pServer = BLEDevice::createServer();
-  BLEService *pService = pServer->createService(SERVICE_UUID);
-  BLECharacteristic *pCharacteristic = pService->createCharacteristic(
-                                         CHARACTERISTIC_UUID,
-                                         BLECharacteristic::PROPERTY_READ |
-                                         BLECharacteristic::PROPERTY_WRITE
-                                       );
+    //Nastavení zpětného volání pro server
+  pServer->setCallbacks(new ServerCallBack());
 
-  pCharacteristic->setValue("Hello World says Neil");
+
+  BLEService *pService = pServer->createService(SERVICE_UUID);
   pService->start();
 
   BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();

@@ -10,44 +10,71 @@ struct DevicesView: View {
                         ForEach(
                             bluetoothManager.foundPeripheralsNames, id: \.uuid
                         ) { device in
-                            Button(action: {}) {
-                                Text(device.name)
-                                    .fontWeight(.bold)
-                                    .padding()
-                                    .font(
-                                        .system(
-                                            size: geometry.size.height
-                                                > geometry.size.width
-                                                ? geometry.size.width * 0.04
-                                                : geometry.size.height * 0.04)
-                                    )
+
+                            Button(action: {
+                                bluetoothManager.connectToPeripheral(with: device.uuid)
+                            }) {
+                                HStack {
+                                    Image(systemName: "homekit")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 30, height: 30)
+                                        .foregroundColor(.blue)
+                                        .padding(1)
+                                        .padding(.leading, 10)
+                                    Text(device.name)
+                                    
+                                        .fontWeight(.bold)
+                                        .padding(.top)
+                                        .padding(.bottom)
+                                        .font(
+                                            .system(
+                                                size: geometry.size.height
+                                                    > geometry.size.width
+                                                    ? geometry.size.width * 0.04
+                                                    : geometry.size.height * 0.04)
+                                        )
+                                }
+             
 
                                     .frame(
                                         width: geometry.size.height
                                             > geometry.size.width
-                                            ? geometry.size.width * 0.9
-                                            : geometry.size.width * 0.9,
+                                            ? geometry.size.width * 0.8
+                                            : geometry.size.width * 0.8,
                                         alignment: .leading
                                     )
                                     .background(Color.black.opacity(0.1))
                                     .cornerRadius(10)
-                                    .padding(.vertical, 5)
+                                    .padding(.vertical, 2)
                                     .foregroundStyle(.black)
                             }
                         }
                     }
                     .padding(10)
                     .padding(.top, 40.0)
+                    
+                    if(bluetoothManager.scanning) {
+
+                            LoadingView()
+                   
+                          
+                
+                        
+                
+                    }
+                
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .transition(.opacity)
+
+           
         }
     }
 }
 
 struct LoadingView: View {
-    @State private var spacingAnimation = false
-    @State private var isBreathing = false
+    @State private var spacingAnimation = true
 
     var body: some View {
         GeometryReader { geometry in
@@ -85,20 +112,19 @@ struct LoadingView: View {
                     }
                 }
 
-                Text("Searching for devices...")
-                    .bold()
-                    .foregroundColor(isBreathing ? .gray : .gray.opacity(0.65))
-
-                    .padding(
-                        .top,
-                        geometry.size.height > geometry.size.width
-                            ? geometry.size.width * 0.05
-                            : geometry.size.height * 0.05)
-                Spacer().frame(height: geometry.size.height * 0.4)
-
+                HStack {
+                    Text("Searching for devices...")
+                        .bold()
+                        .foregroundColor(.gray.opacity(0.65))
+                        .padding(
+                            .top,
+                            geometry.size.height > geometry.size.width
+                                ? geometry.size.width * 0.05
+                                : geometry.size.height * 0.05)
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-
+           
         }
     }
 }
@@ -122,23 +148,22 @@ struct ContentView: View {
             VStack {
                 Spacer()
 
-                if bluetoothManager.scanning {
+                if bluetoothManager.scanning && bluetoothManager.foundPeripheralsNames.isEmpty {
                     LoadingView()
                 } else {
                     DevicesView(bluetoothManager: bluetoothManager)
+             
                 }
 
                 Button(action: {
-                    withAnimation {
-                        if bluetoothManager.scanning {
-                            bluetoothManager.stopScan()
-                            return
-                        }
-                        bluetoothManager.startScan()
+                    if bluetoothManager.scanning {
+                        bluetoothManager.stopScan()
+                        return
                     }
+                    bluetoothManager.startScan()
                 }) {
 
-                    Text(bluetoothManager.scanning ? "Stop" : "Search")
+                    Text(bluetoothManager.scanning ? "Stop" : "Add new device")
                         .frame(width: geometry.size.width * 0.7, height: 50)
                         .font(
                             .system(
@@ -157,7 +182,6 @@ struct ContentView: View {
                 .padding()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .animation(.easeInOut, value: bluetoothManager.scanning)  //TODO nevím k čemu to patří
         }
     }
 }
