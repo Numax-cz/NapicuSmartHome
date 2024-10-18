@@ -55,19 +55,12 @@ struct DevicesView: View {
                     .padding(.top, 40.0)
                     
                     if(bluetoothManager.scanning) {
-
                             LoadingView()
-                   
-                          
-                
-                        
-                
                     }
                 
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-
            
         }
     }
@@ -124,7 +117,6 @@ struct LoadingView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-           
         }
     }
 }

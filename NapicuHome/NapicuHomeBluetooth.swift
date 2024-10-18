@@ -23,7 +23,8 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
 
     private var allowedUUIDS = [CBUUID(string: "cea986c2-4405-11ee-be56-0242ac120002")]
     
-    private var timer: Timer?
+    private var scanTimer: Timer?
+    private var autoStopScanWork: DispatchWorkItem?
     
     @Published var foundPeripheralsNames: [PeripheralDisplayItem] = {
             #if targetEnvironment(simulator)
@@ -56,21 +57,27 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
             self.centralManager?.scanForPeripherals(withServices: nil)
             self.scanning = true
          
-            self.timer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
+            self.scanTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
                 self?.updateScan()
             }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { [weak self] in
+            autoStopScanWork?.cancel()
+            
+            // Vytvoření nového DispatchWorkItem
+            autoStopScanWork = DispatchWorkItem { [weak self] in
                 self?.stopScan()
             }
+            
+            // Naplánování nového DispatchWorkItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0, execute: autoStopScanWork!)
         }
     }
     
     func stopScan() {
         self.scanning = false
         self.centralManager?.stopScan()
-        self.timer?.invalidate()
-        self.timer = nil
+        self.scanTimer?.invalidate()
+        self.scanTimer = nil
     }
     
     
