@@ -1,5 +1,6 @@
+#include <NapicuSmartHome/include/NapicuSmartHome.h>
 
-#include <include/main.h>
+#define DEFAULT_BLE_NAME "NapicuSmartHome"
 
 
 #define SERVICE_UUID "cea986c2-4405-11ee-be56-0242ac120002" 

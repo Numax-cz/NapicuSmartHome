@@ -63,13 +63,11 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
             
             autoStopScanWork?.cancel()
             
-            // Vytvoření nového DispatchWorkItem
             autoStopScanWork = DispatchWorkItem { [weak self] in
                 self?.stopScan()
             }
-            
-            // Naplánování nového DispatchWorkItem
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0, execute: autoStopScanWork!)
+        
+            DispatchQueue.main.asyncAfter(deadline: .now() + 17.0, execute: autoStopScanWork!)
         }
     }
     
@@ -104,15 +102,13 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
     func connectToPeripheral(with uuid: UUID) {
         self.stopScan()
         guard let discoveredPeripheral = foundPeripherals.first(where: { $0.peripheral.identifier == uuid }) else {
+            print("Není")
             return
         }
         
         self.centralManager?.connect(discoveredPeripheral.peripheral, options: nil)
         discoveredPeripheral.peripheral.delegate = self
     }
-    
-    
-
 }
 
 extension BluetoothManager: CBCentralManagerDelegate {
@@ -163,5 +159,4 @@ extension BluetoothManager: CBCentralManagerDelegate {
             print("Device was disconnected.")
         }
     }
-
 }

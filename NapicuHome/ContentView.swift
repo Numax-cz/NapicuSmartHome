@@ -1,8 +1,10 @@
 import SwiftUI
 
 struct DevicesView: View {
+
     @ObservedObject var bluetoothManager: BluetoothManager
     var body: some View {
+        
         GeometryReader { geometry in
             VStack {
                 ScrollView {
@@ -61,8 +63,14 @@ struct DevicesView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            
+    
+      
+           
+            
            
         }
+    
     }
 }
 
@@ -72,7 +80,7 @@ struct LoadingView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                Spacer()
+              
 
                 HStack(spacing: spacingAnimation ? CGFloat(15) : CGFloat(10)) {
                     Capsule(style: .continuous)
@@ -131,20 +139,31 @@ struct DeviceNotFound: View {
     }
 }
 
+	
+
 struct ContentView: View {
 
     @StateObject private var bluetoothManager = BluetoothManager()
+    @State private var isAlertPresented = false
 
+
+    
     var body: some View {
         GeometryReader { geometry in
             VStack {
+            
+      
                 Spacer()
 
                 if bluetoothManager.scanning && bluetoothManager.foundPeripheralsNames.isEmpty {
                     LoadingView()
                 } else {
                     DevicesView(bluetoothManager: bluetoothManager)
-             
+            
+                    
+                 
+                        
+            
                 }
 
                 Button(action: {
@@ -172,8 +191,14 @@ struct ContentView: View {
 
                 }
                 .padding()
+                
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .alert(title: "🥵", message: "message",
+                   primaryButton: NapicuAlertButton(title: "Yes", action: { }),
+                   secondaryButton: NapicuAlertButton(title: "No", action: {  }),
+                   isPresented: $isAlertPresented)
+ 
         }
     }
 }

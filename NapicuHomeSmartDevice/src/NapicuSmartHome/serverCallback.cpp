@@ -1,4 +1,4 @@
-#include <include/serverCallBack.h>
+#include <NapicuSmartHome/include/NapicuSmartHome.h>
 // při připojení zařízení nastav proměnnou na log1
 void ServerCallBack::onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param) {
   Serial.print("Connected");
