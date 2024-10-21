@@ -139,13 +139,9 @@ struct DeviceNotFound: View {
     }
 }
 
-	
-
 struct ContentView: View {
 
     @StateObject private var bluetoothManager = BluetoothManager()
-    @State private var isAlertPresented = false
-
 
     
     var body: some View {
@@ -159,10 +155,6 @@ struct ContentView: View {
                     LoadingView()
                 } else {
                     DevicesView(bluetoothManager: bluetoothManager)
-            
-                    
-                 
-                        
             
                 }
 
@@ -194,10 +186,11 @@ struct ContentView: View {
                 
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .alert(title: "🥵", message: "message",
-                   primaryButton: NapicuAlertButton(title: "Yes", action: { }),
-                   secondaryButton: NapicuAlertButton(title: "No", action: {  }),
-                   isPresented: $isAlertPresented)
+            .alert(title: bluetoothManager.alertManager.title,
+                   message: bluetoothManager.alertManager.message,
+                   primaryButton: bluetoothManager.alertManager.primaryButtonAction,
+                   secondaryButton: bluetoothManager.alertManager.secondaryButtonAction,
+                   isPresented: $bluetoothManager.alertManager.isAlertPresented)
  
         }
     }

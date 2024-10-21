@@ -19,12 +19,16 @@ struct PeripheralDisplayItem {
 
 class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
     private var centralManager: CBCentralManager?
+    
     private var foundPeripherals: [DiscoveredPeripheral] = []
 
     private var allowedUUIDS = [CBUUID(string: "cea986c2-4405-11ee-be56-0242ac120002")]
     
     private var scanTimer: Timer?
+    
     private var autoStopScanWork: DispatchWorkItem?
+    
+    @Published public var alertManager = NapicuAlertManager()
     
     @Published var foundPeripheralsNames: [PeripheralDisplayItem] = {
             #if targetEnvironment(simulator)
@@ -102,7 +106,15 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
     func connectToPeripheral(with uuid: UUID) {
         self.stopScan()
         guard let discoveredPeripheral = foundPeripherals.first(where: { $0.peripheral.identifier == uuid }) else {
-            print("Není")
+
+            alertManager = NapicuAlertManager(
+                title: "Error",
+                message: "Unable to connect to device",
+                primaryButtonAction: NapicuAlertButton(title: "ok", action: {}),
+                secondaryButtonAction: NapicuAlertButton(title: "NULL", action: {})
+            )
+            
+            alertManager.show()
             return
         }
         
