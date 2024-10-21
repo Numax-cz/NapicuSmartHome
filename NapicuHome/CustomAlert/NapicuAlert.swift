@@ -183,16 +183,15 @@ struct NapicuAlert: View {
 
 extension View {
 
-    func alert(title: String = "", message: String = "", dismissButton: NapicuAlertButton = NapicuAlertButton(title: "ok"), isPresented: Binding<Bool>) -> some View {
-        let title   = NSLocalizedString(title, comment: "")
-        let message = NSLocalizedString(message, comment: "")
-    
-        return modifier(NapicuAlertModifier(title: title, message: message, dismissButton: dismissButton, isPresented: isPresented))
-    }
 
-    func alert(title: String = "", message: String = "", primaryButton: NapicuAlertButton, secondaryButton: NapicuAlertButton, isPresented: Binding<Bool>) -> some View {
+
+    func alert(title: String = "", message: String = "", primaryButton: NapicuAlertButton, secondaryButton: NapicuAlertButton? = nil, isPresented: Binding<Bool>) -> some View {
         let title   = NSLocalizedString(title, comment: "")
         let message = NSLocalizedString(message, comment: "")
+        
+        if (secondaryButton == nil) {
+            return modifier(NapicuAlertModifier(title: title, message: message, dismissButton: primaryButton, isPresented: isPresented))
+        }
     
         return modifier(NapicuAlertModifier(title: title, message: message, primaryButton: primaryButton, secondaryButton: secondaryButton, isPresented: isPresented))
     }

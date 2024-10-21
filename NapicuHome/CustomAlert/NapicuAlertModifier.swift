@@ -56,7 +56,7 @@ extension NapicuAlertModifier {
         _isPresented = isPresented
     }
 
-    init(title: String = "", message: String = "", primaryButton: NapicuAlertButton, secondaryButton: NapicuAlertButton, isPresented: Binding<Bool>) {
+    init(title: String = "", message: String = "", primaryButton: NapicuAlertButton, secondaryButton: NapicuAlertButton? = nil, isPresented: Binding<Bool>) {
         self.title           = title
         self.message         = message
         self.primaryButton   = primaryButton

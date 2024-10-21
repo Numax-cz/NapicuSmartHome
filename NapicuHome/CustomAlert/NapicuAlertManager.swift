@@ -12,12 +12,11 @@ class NapicuAlertManager: ObservableObject {
     @Published var message = "NULL"
     @Published var primaryButtonAction: NapicuAlertButton =
         NapicuAlertButton(title: "NULL")
-    @Published var secondaryButtonAction: NapicuAlertButton =
-        NapicuAlertButton(title: "NULL")
+    @Published var secondaryButtonAction: NapicuAlertButton? = nil
     
     init() {}
     
-    init(title: String = "", message: String = "", primaryButtonAction: NapicuAlertButton, secondaryButtonAction: NapicuAlertButton) {
+    init(title: String = "", message: String = "", primaryButtonAction: NapicuAlertButton, secondaryButtonAction: NapicuAlertButton? = nil) {
         self.title = title
         self.message = message
         self.primaryButtonAction = primaryButtonAction

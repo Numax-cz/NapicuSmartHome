@@ -191,7 +191,6 @@ struct ContentView: View {
                    primaryButton: bluetoothManager.alertManager.primaryButtonAction,
                    secondaryButton: bluetoothManager.alertManager.secondaryButtonAction,
                    isPresented: $bluetoothManager.alertManager.isAlertPresented)
- 
         }
     }
 }
