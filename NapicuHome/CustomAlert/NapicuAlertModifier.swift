@@ -33,10 +33,11 @@ extension NapicuAlertModifier: ViewModifier {
                 .edgesIgnoringSafeArea(.all)
     
                if(isPresented) {
-                   NapicuAlert(title: title, message: message, dismissButton: dismissButton, primaryButton: primaryButton, secondaryButton: secondaryButton)
+                   NapicuAlert(title: title, message: message, dismissButton: dismissButton, primaryButton: primaryButton, secondaryButton: secondaryButton, isPresented: $isPresented)
+                   
+                   
                }
                     
-                
             }
                
         }

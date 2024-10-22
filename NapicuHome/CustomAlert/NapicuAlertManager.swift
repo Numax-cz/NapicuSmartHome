@@ -24,6 +24,6 @@ class NapicuAlertManager: ObservableObject {
     }
     
     public func show() {
-        self.isAlertPresented.toggle()
+        self.isAlertPresented = true
     }
 }

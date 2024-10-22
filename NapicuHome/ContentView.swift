@@ -142,8 +142,10 @@ struct DeviceNotFound: View {
 struct ContentView: View {
 
     @StateObject private var bluetoothManager = BluetoothManager()
-
     
+    @State private var isAlertPresented = false
+
+
     var body: some View {
         GeometryReader { geometry in
             VStack {
@@ -159,11 +161,7 @@ struct ContentView: View {
                 }
 
                 Button(action: {
-                    if bluetoothManager.scanning {
-                        bluetoothManager.stopScan()
-                        return
-                    }
-                    bluetoothManager.startScan()
+                    isAlertPresented = true
                 }) {
 
                     Text(bluetoothManager.scanning ? "Stop" : "Add new device")

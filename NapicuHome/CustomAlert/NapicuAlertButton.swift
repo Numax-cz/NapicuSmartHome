@@ -21,11 +21,11 @@ struct NapicuAlertButton: View {
         
         } label: {
             Text(title)
-                .font(.system(size: 14, weight: .medium))
+                .font(.system(size: 18, weight: .bold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 10)
         }
-        .frame(height: 30)
+        .frame(width: 120, height: 35)
         .background(Color.blue)
         .cornerRadius(8)
     }

@@ -9,6 +9,8 @@ import SwiftUI
 
 struct NapicuAlert: View {
 
+
+    
     // MARK: - Value
     // MARK: Public
     let title: String
@@ -16,6 +18,7 @@ struct NapicuAlert: View {
     let dismissButton: NapicuAlertButton?
     let primaryButton: NapicuAlertButton?
     let secondaryButton: NapicuAlertButton?
+    @Binding public var isPresented: Bool
     
     // MARK: Private
     @State private var opacity: CGFloat           = 0
@@ -100,7 +103,10 @@ struct NapicuAlert: View {
             NapicuAlertButton(title: button.title) {
                 animate(isShown: false) {
                     dismiss()
+                    
+                    isPresented = false
                 }
+             
             
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                     button.action?()
@@ -115,7 +121,11 @@ struct NapicuAlert: View {
             NapicuAlertButton(title: button.title) {
                 animate(isShown: false) {
                     dismiss()
+              
+                    isPresented = false
                 }
+                
+         
         
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                     button.action?()
@@ -130,6 +140,8 @@ struct NapicuAlert: View {
             NapicuAlertButton(title: button.title) {
                 animate(isShown: false) {
                     dismiss()
+                    
+                    isPresented = false
                 }
         
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
