@@ -107,7 +107,6 @@ struct NapicuAlert: View {
                     isPresented = false
                 }
              
-            
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                     button.action?()
                 }

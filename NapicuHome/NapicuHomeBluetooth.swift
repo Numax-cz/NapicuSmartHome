@@ -110,8 +110,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
             alertManager = NapicuAlertManager(
                 title: "Error",
                 message: "Unable to connect to device",
-                primaryButtonAction: NapicuAlertButton(title: "ok", action: {}),
-                secondaryButtonAction: NapicuAlertButton(title: "ok", action: {})
+                primaryButtonAction: NapicuAlertButton(title: "ok", action: {})
             )
             
             alertManager.show()
