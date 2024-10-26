@@ -12,7 +12,7 @@ enum DeviceCurrentView {
 }
 
 
-struct DeviceView: View {
+struct DeviceAppView: View {
     @State private var showMenu = false
     @State private var selectedView: DeviceCurrentView = .settings
     
@@ -154,5 +154,5 @@ struct DeviceView: View {
 }
 
 #Preview {
-    DeviceView()
+    DeviceAppView()
 }

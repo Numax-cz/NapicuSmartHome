@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct DevicesView: View {
+struct DevicesListView: View {
 
     @ObservedObject var bluetoothManager: BluetoothManager
     var body: some View {
@@ -148,7 +148,7 @@ struct ContentView: View {
 
     var body: some View {
         if(bluetoothManager.isDeviceConnected()) {
-            DeviceView()
+            DeviceAppView()
         } else {
             GeometryReader { geometry in
                 VStack {
@@ -157,7 +157,7 @@ struct ContentView: View {
                     if bluetoothManager.scanning && bluetoothManager.foundPeripheralsNames.isEmpty {
                         LoadingView()
                     } else {
-                        DevicesView(bluetoothManager: bluetoothManager)
+                        DevicesListView(bluetoothManager: bluetoothManager)
                     }
 
                     Button(action: {
@@ -201,5 +201,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    DeviceView()
+    DeviceAppView()
 }
