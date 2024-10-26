@@ -114,12 +114,11 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
                 peripheral.delegate = self
                 centralManager?.connect(peripheral, options: nil)
                 connectedPeripheral = peripheral
-                print("connectd")
                 UserDefaults.standard.set(uuid.uuidString, forKey: "previousConnectedDeviceUUID")
               } else {
                   alertManager = NapicuAlertManager(
                       title: "Error",
-                      message: "Unable to connect to device",
+                      message: "Unable to find device",
                       primaryButtonAction: NapicuAlertButton(title: "ok", action: {})
                   )
             
