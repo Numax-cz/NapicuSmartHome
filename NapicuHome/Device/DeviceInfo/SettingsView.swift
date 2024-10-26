@@ -18,7 +18,7 @@ struct SettingsInfoBox: View {
          self.boxTitle = boxTitle
          self.boxDescription = boxDescription
      }
-
+		
     var body: some View {
         GeometryReader { geometry in
             VStack() {
@@ -40,13 +40,13 @@ struct SettingsInfoBox: View {
 
 
 struct SettingsView: View {
-  
+    @ObservedObject var bluetoothManager: BluetoothManager
     
     var body: some View {
         GeometryReader { geometry in
             VStack {
                 VStack() {
-                    Text("NapicuDevice")
+                    Text(bluetoothManager.connectedPeripheral?.name ?? "DevicePreview")
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(20)
                         .font(.system(size: 30))
@@ -66,7 +66,7 @@ struct SettingsView: View {
                    
                     
  
-                         SettingsInfoBox(boxTitle: "Name", boxDescription: "NapiucHome >")
+                         SettingsInfoBox(boxTitle: "Name", boxDescription: bluetoothManager.connectedPeripheral?.name ?? "DevicePreview")
                          SettingsInfoBox(boxTitle: "Fimware version", boxDescription: "1.0.0")
                  
            

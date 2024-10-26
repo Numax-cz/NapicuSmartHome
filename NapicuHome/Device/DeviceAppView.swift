@@ -15,6 +15,7 @@ enum DeviceCurrentView {
 struct DeviceAppView: View {
     @State private var showMenu = false
     @State private var selectedView: DeviceCurrentView = .settings
+    @ObservedObject var bluetoothManager: BluetoothManager
     
     var body: some View {
         ZStack {
@@ -53,7 +54,7 @@ struct DeviceAppView: View {
                                         .asymmetric(insertion: .move(edge: .leading).combined(with: .opacity),
                                                                              removal: .move(edge: .trailing).combined(with: .opacity)))
                             case .settings:
-                                SettingsView()
+                                SettingsView(bluetoothManager: bluetoothManager)
                                     .transition(
                                         .asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity),
                                                                   removal: .move(edge: .leading).combined(with: .opacity)))
@@ -154,5 +155,5 @@ struct DeviceAppView: View {
 }
 
 #Preview {
-    DeviceAppView()
+    DeviceAppView(bluetoothManager: BluetoothManager())
 }

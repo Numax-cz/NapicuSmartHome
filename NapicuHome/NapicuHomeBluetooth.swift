@@ -107,21 +107,41 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
     
     func connectToPeripheral(with uuid: UUID) {
         self.stopScan()
-        guard let discoveredPeripheral = foundPeripherals.first(where: { $0.peripheral.identifier == uuid }) else {
 
+        if (centralManager?.state == .poweredOn) {
+              let peripherals = centralManager?.retrievePeripherals(withIdentifiers: [uuid])
+            if let peripheral = peripherals?.first {
+                peripheral.delegate = self
+                centralManager?.connect(peripheral, options: nil)
+                connectedPeripheral = peripheral
+                print("connectd")
+                UserDefaults.standard.set(uuid.uuidString, forKey: "previousConnectedDeviceUUID")
+              } else {
+                  alertManager = NapicuAlertManager(
+                      title: "Error",
+                      message: "Unable to connect to device",
+                      primaryButtonAction: NapicuAlertButton(title: "ok", action: {})
+                  )
+            
+                  alertManager.show()
+              }
+        } else {
             alertManager = NapicuAlertManager(
-                title: "Error",
-                message: "Unable to connect to device",
+                title: "Bluetooth Error",
+                message: "Bluetooth is not enabled",
                 primaryButtonAction: NapicuAlertButton(title: "ok", action: {})
             )
-            
+      
             alertManager.show()
-            return
-        }	
+        }
+    }
+    
+    func connectToPreviousPeripheral() {
+        if let savedUUIDString = UserDefaults.standard.string(forKey: "previousConnectedDeviceUUID"),
+           let uuid = UUID(uuidString: savedUUIDString) {
+            connectToPeripheral(with: uuid)
         
-        self.centralManager?.connect(discoveredPeripheral.peripheral, options: nil)
-        discoveredPeripheral.peripheral.delegate = self
-        connectedPeripheral = discoveredPeripheral.peripheral
+        }
     }
     
     func isDeviceConnected() -> Bool {
@@ -131,7 +151,23 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
 
 extension BluetoothManager: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-
+        switch central.state {
+            case .poweredOn:
+                print("Bluetooth is powered on.")
+                connectToPreviousPeripheral()
+            case .poweredOff:
+                print("Bluetooth is powered off.")
+            case .resetting:
+                print("Bluetooth is resetting.")
+            case .unauthorized:
+                print("Application is not authorized to use Bluetooth.")
+            case .unsupported:
+                print("This device does not support Bluetooth.")
+            case .unknown:
+                print("Bluetooth state is unknown.")
+            @unknown default:
+                print("Unexpected Bluetooth state.")
+        }
     }
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber)

@@ -125,7 +125,7 @@ struct LoadingView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
+        }	
     }
 }
 
@@ -148,7 +148,7 @@ struct ContentView: View {
 
     var body: some View {
         if(bluetoothManager.isDeviceConnected()) {
-            DeviceAppView()
+            DeviceAppView(bluetoothManager: bluetoothManager)
         } else {
             GeometryReader { geometry in
                 VStack {
@@ -201,5 +201,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    DeviceAppView()
+    DeviceAppView(bluetoothManager: BluetoothManager())
 }
