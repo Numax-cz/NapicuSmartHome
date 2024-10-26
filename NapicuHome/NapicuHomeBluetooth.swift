@@ -28,6 +28,8 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
     
     private var autoStopScanWork: DispatchWorkItem?
     
+    var connectedPeripheral: CBPeripheral?
+    
     @Published public var alertManager = NapicuAlertManager()
     
     @Published var foundPeripheralsNames: [PeripheralDisplayItem] = {
@@ -115,10 +117,15 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
             
             alertManager.show()
             return
-        }
+        }	
         
         self.centralManager?.connect(discoveredPeripheral.peripheral, options: nil)
         discoveredPeripheral.peripheral.delegate = self
+        connectedPeripheral = discoveredPeripheral.peripheral
+    }
+    
+    func isDeviceConnected() -> Bool {
+        return connectedPeripheral != nil
     }
 }
 

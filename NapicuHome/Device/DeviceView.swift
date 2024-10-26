@@ -6,8 +6,15 @@
 //
 import SwiftUI
 
-struct HomeView: View {
-    @State private var showMenu = true
+enum DeviceCurrentView {
+    case home
+    case settings
+}
+
+
+struct DeviceView: View {
+    @State private var showMenu = false
+    @State private var selectedView: DeviceCurrentView = .settings
     
     var body: some View {
         ZStack {
@@ -39,50 +46,28 @@ struct HomeView: View {
                     
                     VStack {
                         VStack {
-                            HStack {
-                                VStack {
-                                
-                                }
-                                .frame(width: 130, height: 130)
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(20)
-                                
-                                Spacer()
-                                
-                                VStack {
-                                
-                                }
-                                .frame(width: 130, height: 130)
-                                .background(Color.blue)
-                                .cornerRadius(20)
+                            switch selectedView {
+                            case .home:
+                                DeviceInfoView()
+                                    .transition(
+                                        .asymmetric(insertion: .move(edge: .leading).combined(with: .opacity),
+                                                                             removal: .move(edge: .trailing).combined(with: .opacity)))
+                            case .settings:
+                                SettingsView()
+                                    .transition(
+                                        .asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity),
+                                                                  removal: .move(edge: .leading).combined(with: .opacity)))
                             }
-                            
-                            HStack {
-                                VStack {
-                               
-                                }
-                                .frame(width: 130, height: 130)
-                                .background(Color.blue)
-                                .cornerRadius(20)
-                                
-                                Spacer()
-                                
-                                VStack {
-                                 
-                                }
-                                .frame(width: 130, height: 130)
-                                .background(Color.blue)
-                                .cornerRadius(20)
-                            }
-                        }
-                        .frame(maxWidth: 300)
+                        }    .animation(.easeInOut(duration: 0.5), value: selectedView)
+              
+                 
+                        
                         
                         Spacer()
                         
                         HStack {
                             Button(action: {
-                        
+                                selectedView = .home
                             }) {
                                 Image(systemName: "house.fill")
                                     .resizable()
@@ -93,7 +78,7 @@ struct HomeView: View {
                             Spacer()
                             
                             Button(action: {
-                               
+                                selectedView = .settings
                             }) {
                                 Image(systemName: "gearshape.fill")
                                     .resizable()
@@ -113,6 +98,14 @@ struct HomeView: View {
                 
     
                 if showMenu {
+                    Color.black.opacity(0.2)
+                        .ignoresSafeArea()
+                        .zIndex(100)
+                        .onTapGesture {
+                            withAnimation {
+                               showMenu = false
+                           }
+                        }
                     VStack(alignment: .leading, spacing: 0) {
                         VStack(alignment: .leading, spacing: 20) {
                             Button(action: {
@@ -125,11 +118,11 @@ struct HomeView: View {
                                     .frame(width: 30, height: 30)
                                
                                 Text("Add Device")
-                        
-                                    
-                                    .cornerRadius(10)
+                                    .fontWeight(.medium)
                                     .foregroundColor(.black)
                             }
+                            Divider()
+                                .background(Color.gray)
                             
                             Button(action: {
                           
@@ -139,23 +132,19 @@ struct HomeView: View {
                                     .scaledToFit()
                                     .frame(width: 30, height: 30)
                                 Text("Scan QR code")
-                           
-                           
-                                    .cornerRadius(10)
+                                    .fontWeight(.medium)
                                     .foregroundColor(.black)
                             }
                         }.padding(20)
-                       
-                        
                      
                     }
                     .background(Color.white)
                     .cornerRadius(10)
                     .shadow(radius: 10)
-                    .frame(width: 250)
-                    .position(x: geometry.size.width - 100, y: 105)
+                    .frame(maxWidth: 190)
+                    .position(x: geometry.size.width - 100, y: 120)
                     .transition(.opacity)
-                    .zIndex(20)
+                    .zIndex(1000)
                 }
             }
             
@@ -165,5 +154,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    DeviceView()
 }
