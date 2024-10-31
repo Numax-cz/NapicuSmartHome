@@ -46,7 +46,7 @@ struct SettingsView: View {
         GeometryReader { geometry in
             VStack {
                 VStack() {
-                    Text(bluetoothManager.connectedPeripheral?.name ?? "DevicePreview")
+                    Text(bluetoothManager.connectedPeripheral?.peripheral.name ?? "DevicePreview")
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(20)
                         .font(.system(size: 30))
@@ -66,7 +66,7 @@ struct SettingsView: View {
                    
                     
  
-                         SettingsInfoBox(boxTitle: "Name", boxDescription: bluetoothManager.connectedPeripheral?.name ?? "DevicePreview")
+                    SettingsInfoBox(boxTitle: "Name", boxDescription: bluetoothManager.connectedPeripheral?.peripheral.name ?? "DevicePreview")
                          SettingsInfoBox(boxTitle: "Fimware version", boxDescription: "1.0.0")
                  
            

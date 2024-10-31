@@ -74,6 +74,82 @@ struct DevicesListView: View {
     }
 }
 
+struct WiFiListView: View {
+    
+     let items: [String] = ["FreeWYFYNOVIRUS", "TvojeMamaJeWifi", "Nemamwifi", "MasterJeWiFy"]
+    var body: some View {
+        GeometryReader { geometry in
+            VStack {
+                Spacer()
+                Image(systemName: "wifi")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(
+                        width: geometry.size.height
+                        > geometry.size.width
+                        ? geometry.size.width * 0.30
+                        : geometry.size.width * 0.30)
+                    .foregroundColor(.blue)
+                    .padding(.top, geometry.size.height
+                             < geometry.size.width
+                             ? geometry.size.width * 0.04
+                             : geometry.size.height * 0.04)
+                Text("Connect a smart device to your wifi")
+                    .fontWeight(.bold)
+                    .padding(.top, geometry.size.height
+                             < geometry.size.width
+                             ? geometry.size.width * 0.04
+                             : geometry.size.height * 0.04)
+                    .font(
+                        .system(
+                            size: geometry.size.height
+                                > geometry.size.width
+                                ? geometry.size.width * 0.04
+                                : geometry.size.height * 0.04)
+                    )
+              
+                ScrollView {
+                    VStack {
+                        ForEach(
+                            items, id: \.self
+                        ) { wifi in
+
+                            Button(action: {
+                                
+                            }) {
+                                    Text(wifi)
+                                        .fontWeight(.bold)
+                                        .padding()
+                                        .font(
+                                            .system(
+                                                size: geometry.size.height
+                                                    > geometry.size.width
+                                                    ? geometry.size.width * 0.04
+                                                    : geometry.size.height * 0.04)
+                                        )
+                                }
+                                    .frame(
+                                        width: geometry.size.height
+                                            > geometry.size.width
+                                            ? geometry.size.width * 0.8
+                                            : geometry.size.width * 0.8,
+                                        alignment: .leading
+                                    )
+                                    .background(Color.black.opacity(0.1))
+                                    .cornerRadius(10)
+                                    .padding(.vertical, 2)
+                                    .foregroundStyle(.black)
+                        }
+                    }
+                    .padding(10)
+                    .padding(.top, 40.0)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+    }
+}
+
 struct LoadingView: View {
     @State private var spacingAnimation = true
 
@@ -81,6 +157,7 @@ struct LoadingView: View {
         GeometryReader { geometry in
             VStack {
               
+                
 
                 HStack(spacing: spacingAnimation ? CGFloat(15) : CGFloat(10)) {
                     Capsule(style: .continuous)
@@ -147,9 +224,24 @@ struct ContentView: View {
 
 
     var body: some View {
-        if(bluetoothManager.isDeviceConnected()) {
+        if(bluetoothManager.isDeviceConnected() && (bluetoothManager.connectedPeripheral?.isConnectedToWiFi ?? false)) {
             DeviceAppView(bluetoothManager: bluetoothManager)
-        } else {
+        }
+        else if( !(bluetoothManager.connectedPeripheral?.isConnectedToWiFi ?? false)) {
+            GeometryReader { geometry in
+                VStack {
+                    Spacer()
+                    
+                    WiFiListView()
+     
+                    
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            
+            
+        }
+        else {
             GeometryReader { geometry in
                 VStack {
                     Spacer()
@@ -201,5 +293,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    DeviceAppView(bluetoothManager: BluetoothManager())
+    //DeviceAppView(bluetoothManager: BluetoothManager())
+    ContentView()
 }

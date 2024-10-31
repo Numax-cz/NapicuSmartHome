@@ -122,20 +122,20 @@ struct DeviceAppView: View {
                                     .fontWeight(.medium)
                                     .foregroundColor(.black)
                             }
-                            Divider()
-                                .background(Color.gray)
-                            
-                            Button(action: {
-                          
-                            }) {
-                                Image(systemName: "qrcode.viewfinder")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 30, height: 30)
-                                Text("Scan QR code")
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.black)
-                            }
+                            //    Divider()
+                            //     .background(Color.gray)
+                                
+                            //    Button(action: {
+                              
+                            //    }) {
+                            //        Image(systemName: "qrcode.viewfinder")
+                            //            .resizable()
+                            //            .scaledToFit()
+                            //            .frame(width: 30, height: 30)
+                           //         Text("Scan QR code")
+                           //            .fontWeight(.medium)
+                           //             .foregroundColor(.black)
+                           //     }
                         }.padding(20)
                      
                     }
@@ -143,7 +143,7 @@ struct DeviceAppView: View {
                     .cornerRadius(10)
                     .shadow(radius: 10)
                     .frame(maxWidth: 190)
-                    .position(x: geometry.size.width - 100, y: 120)
+                    .position(x: geometry.size.width - 100, y: 100)
                     .transition(.opacity)
                     .zIndex(1000)
                 }

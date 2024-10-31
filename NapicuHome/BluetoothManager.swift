@@ -28,7 +28,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
     
     private var autoStopScanWork: DispatchWorkItem?
     
-    var connectedPeripheral: CBPeripheral?
+    var connectedPeripheral: DeviceManager?
     
     @Published public var alertManager = NapicuAlertManager()
     
@@ -113,7 +113,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
             if let peripheral = peripherals?.first {
                 peripheral.delegate = self
                 centralManager?.connect(peripheral, options: nil)
-                connectedPeripheral = peripheral
+                connectedPeripheral =  DeviceManager(peripheral: peripheral)
                 UserDefaults.standard.set(uuid.uuidString, forKey: "previousConnectedDeviceUUID")
               } else {
                   alertManager = NapicuAlertManager(
