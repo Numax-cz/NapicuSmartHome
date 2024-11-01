@@ -14,3 +14,4 @@ void NapicuHome::on_wifi_event(WiFiEvent_t event) {
             break;
     }
 }
+

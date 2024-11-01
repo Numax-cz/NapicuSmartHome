@@ -1,5 +1,10 @@
 #include <NapicuSmartHome/include/NapicuSmartHome.h>
 
+
+BLEServer* NapicuHome::ble_server = nullptr;
+BLEService* NapicuHome::ble_service = nullptr;
+BLEAdvertising* NapicuHome::ble_advertising = nullptr;
+
 void NapicuHome::begin_home(const char *pairingCode, Category catID, const char *displayName, const char *hostNameBase, const char *modelName) {
     homeSpan.setPairingCode(pairingCode);
     homeSpan.begin(catID, displayName, hostNameBase, modelName);
@@ -12,7 +17,7 @@ void NapicuHome::begin_ble(const char *deviceName, const char *uuid) {
     BLEDevice::init(deviceName);
     BLEDevice::setCustomGapHandler(NapicuHome::ble_gap_event_handler);
     NapicuHome::ble_server = BLEDevice::createServer();
-    NapicuHome::ble_server->setCallbacks(new ServerCallBack());
+    NapicuHome::ble_server->setCallbacks(new NapicuHome::ServerCallBack());
 
     NapicuHome::ble_service = NapicuHome::ble_server->createService(uuid);
     NapicuHome::ble_service->start();

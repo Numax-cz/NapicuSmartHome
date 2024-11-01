@@ -6,11 +6,6 @@
 #include <BLEServer.h>
 
 
-class ServerCallBack : public BLEServerCallbacks {
-public:
-    void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param);
-    void onDisconnect(BLEServer* pServer);
-};
 
 
 class NapicuHome {
@@ -46,6 +41,14 @@ private:
     static BLEService *ble_service;
     static BLEAdvertising *ble_advertising;
 
+    class ServerCallBack : public BLEServerCallbacks {
+    public:
+        void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param);
+        void onDisconnect(BLEServer* pServer);
+    };
+
+
     static void on_wifi_event(WiFiEvent_t event);
     static void ble_gap_event_handler(esp_gap_ble_cb_event_t  event, esp_ble_gap_cb_param_t* param);
 };
+
