@@ -5,8 +5,15 @@
 #include <BLEUtils.h>
 #include <BLEServer.h>
 
-
-
+/**
+ * @brief ESP32 WiFi connection status types
+ * 
+ */
+enum class WiFiState {
+    WiFiNoCredentials=0,    /* ESP32 has no WiFi connection data */
+    WiFiConnected=1,        /* ESP32 is connected to WiFi */
+    WiFiDisconected=2       /* ESP32 is disconnected to WiFi */
+};
 
 class NapicuHome {
 
@@ -28,13 +35,7 @@ public:
      * @param uuid Service UUID
      */
     static void begin_ble(const char *deviceName, const char *uuid);
-    /**
-     * @brief Returns whether the data from the wifi network is saved
-     * 
-     * @return true 
-     * @return false 
-     */
-    static bool wifi_credentials_exists();
+
 
 private:
     static BLEServer *ble_server;
@@ -47,6 +48,14 @@ private:
         void onDisconnect(BLEServer* pServer);
     };
 
+    /**
+     * @brief Returns whether the data from the wifi network is saved.
+     * But not if the device is connected!
+     * 
+     * @return true 
+     * @return false 
+     */
+    static bool wifi_credentials_exists();
 
     static void on_wifi_event(WiFiEvent_t event);
     static void ble_gap_event_handler(esp_gap_ble_cb_event_t  event, esp_ble_gap_cb_param_t* param);

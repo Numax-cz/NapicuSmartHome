@@ -8,8 +8,7 @@ BLEAdvertising* NapicuHome::ble_advertising = nullptr;
 void NapicuHome::begin_home(const char *pairingCode, Category catID, const char *displayName, const char *hostNameBase, const char *modelName) {
     homeSpan.setPairingCode(pairingCode);
     homeSpan.begin(catID, displayName, hostNameBase, modelName);
-
-  
+ 
     WiFi.onEvent(NapicuHome::on_wifi_event);
 }
 
