@@ -5,19 +5,22 @@
 #include <BLEUtils.h>
 #include <BLEServer.h>
 
-/**
- * @brief ESP32 WiFi connection status types
- * 
- */
-enum class WiFiState {
-    WiFiNoCredentials=0,    /* ESP32 has no WiFi connection data */
-    WiFiConnected=1,        /* ESP32 is connected to WiFi */
-    WiFiDisconected=2       /* ESP32 is disconnected to WiFi */
-};
 
 class NapicuHome {
 
+
+
 public:
+    /**
+     * @brief ESP32 WiFi connection status types
+     * 
+     */
+    enum class WiFiState {
+        WiFiNoCredentials=0,    /* ESP32 has no WiFi connection data */
+        WiFiConnected=1,        /* ESP32 is connected to WiFi */
+        WiFiDisconected=2       /* ESP32 is disconnected to WiFi */
+    };
+
     /**
      * @brief Starts service for apple homekit
      * 
@@ -32,9 +35,16 @@ public:
      * @brief Starts Bluetooth low energy service
      * 
      * @param deviceName Name that will be displayed
-     * @param uuid Service UUID
+     * @param service_uuid Service UUID
+     * @param wifi_state_uuid UUID service for getting wifi network statuses 
      */
-    static void begin_ble(const char *deviceName, const char *uuid);
+    static void begin_ble(const char *deviceName, const char *service_uuid, const char* wifi_state_uuid);
+    /**
+     * @brief Get the wifi status
+     * 
+     * @return WiFiState 
+     */
+    static NapicuHome::WiFiState get_wifi_status();
 
 
 private:
@@ -46,6 +56,14 @@ private:
     public:
         void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param);
         void onDisconnect(BLEServer* pServer);
+    };
+    /**
+     * @brief Characteristics for network status query 
+     * 
+     */
+    class WiFiStateCharacteristicCallback : public BLECharacteristicCallbacks {
+    public:
+        void onRead(BLECharacteristic *pCharacteristic); 
     };
 
     /**

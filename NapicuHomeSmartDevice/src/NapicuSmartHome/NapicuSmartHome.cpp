@@ -12,20 +12,28 @@ void NapicuHome::begin_home(const char *pairingCode, Category catID, const char 
     WiFi.onEvent(NapicuHome::on_wifi_event);
 }
 
-void NapicuHome::begin_ble(const char *deviceName, const char *uuid) {
+void NapicuHome::begin_ble(const char *deviceName, const char *service_uuid, const char* wifi_state_uuid) {
     BLEDevice::init(deviceName);
     BLEDevice::setCustomGapHandler(NapicuHome::ble_gap_event_handler);
     NapicuHome::ble_server = BLEDevice::createServer();
     NapicuHome::ble_server->setCallbacks(new NapicuHome::ServerCallBack());
+    NapicuHome::ble_service = NapicuHome::ble_server->createService(service_uuid);
 
-    NapicuHome::ble_service = NapicuHome::ble_server->createService(uuid);
+    BLECharacteristic *wifiStateCharacteristic = NapicuHome::ble_service->createCharacteristic(
+        wifi_state_uuid,
+        BLECharacteristic::PROPERTY_READ
+    );
+                                                 
+    wifiStateCharacteristic->setCallbacks(new NapicuHome::WiFiStateCharacteristicCallback());
+
     NapicuHome::ble_service->start();
 
     NapicuHome::ble_advertising = BLEDevice::getAdvertising();
-    NapicuHome::ble_advertising->addServiceUUID(uuid);
+    NapicuHome::ble_advertising->addServiceUUID(service_uuid);
     NapicuHome::ble_advertising->setScanResponse(true);
     NapicuHome::ble_advertising->setMinPreferred(0x06);  
     NapicuHome::ble_advertising->setMinPreferred(0x12);
+
     BLEDevice::startAdvertising();
 }
 
@@ -54,4 +62,14 @@ bool NapicuHome::wifi_credentials_exists() {
 
     nvs_close(nvsHandle); 
     return false; 
+}
+
+NapicuHome::WiFiState NapicuHome::get_wifi_status() {
+    if(NapicuHome::wifi_credentials_exists()) {
+        if(WiFi.SSID()) {
+            return NapicuHome::WiFiState::WiFiConnected;            
+        }
+        return NapicuHome::WiFiState::WiFiDisconected;            
+    }
+    return NapicuHome::WiFiState::WiFiNoCredentials;
 }
