@@ -226,23 +226,19 @@ struct ContentView: View {
 
 
     var body: some View {
-        if(bluetoothManager.isDeviceConnected() && (bluetoothManager.connectedPeripheral?.isConnectedToWiFi ?? false)) {
-            DeviceAppView(bluetoothManager: bluetoothManager)
-        }
-        else if(bluetoothManager.isDeviceConnected() && !(bluetoothManager.connectedPeripheral?.isConnectedToWiFi ?? false)) {
-            GeometryReader { geometry in
-                VStack {
-                    Spacer()
-                    //TODO fix up
-                    if let connectedPeripheral =  bluetoothManager.connectedPeripheral {
+        if let connectedPeripheral = bluetoothManager.connectedPeripheral {
+            if((bluetoothManager.connectedPeripheral?.wifiStatus == .connected)) {
+                DeviceAppView(bluetoothManager: bluetoothManager)
+            }
+            else if(!(bluetoothManager.connectedPeripheral?.wifiStatus == .noCredentials)) {
+                GeometryReader { geometry in
+                    VStack {
+                        Spacer()
                         WiFiListView(bluetoothManager: bluetoothManager, deviceManager: connectedPeripheral)
                     }
-                    
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            
-            
         }
         else {
             GeometryReader { geometry in

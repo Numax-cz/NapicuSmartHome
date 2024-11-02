@@ -18,7 +18,7 @@ public:
     enum class WiFiState {
         WiFiNoCredentials=0,    /* ESP32 has no WiFi connection data */
         WiFiConnected=1,        /* ESP32 is connected to WiFi */
-        WiFiDisconected=2       /* ESP32 is disconnected to WiFi */
+        WiFiDisconected=2       /* ESP32 is disconnected from WiFi */
     };
 
     /**
