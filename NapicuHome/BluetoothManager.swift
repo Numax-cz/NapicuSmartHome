@@ -110,15 +110,36 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
     }
     
     func connectToPeripheral(with uuid: UUID) {
-        self.stopScan()
-
         if (centralManager?.state == .poweredOn) {
-              let peripherals = centralManager?.retrievePeripherals(withIdentifiers: [uuid])
+            
+            let peripherals = centralManager?.retrievePeripherals(withIdentifiers: [uuid])
             if let peripheral = peripherals?.first {
                 peripheral.delegate = self
                 centralManager?.connect(peripheral, options: nil)
-                connectedPeripheral = DeviceManager(peripheral: peripheral)
-                UserDefaults.standard.set(uuid.uuidString, forKey: "previousConnectedDeviceUUID")
+             
+                let source = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
+                source.schedule(deadline: .now(), repeating: 0.5)
+
+                source.setEventHandler { [weak self] in
+                    guard let self = self else { return }
+                    if peripheral.state == .connected {
+                        DispatchQueue.main.async {
+                            self.connectedPeripheral = DeviceManager(peripheral: peripheral)
+                        }
+                        source.cancel()
+                    }
+                }
+                
+                source.resume()
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
+                    if peripheral.state != .connected {
+                        print("Connection timed out")
+                        self?.centralManager?.cancelPeripheralConnection(peripheral)
+                        source.cancel()
+                    }
+                }
+                
               } else {
                   alertManager = NapicuAlertManager(
                       title: "Error",
@@ -135,6 +156,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
             )
             alertManager.show()
         }
+        self.stopScan()
     }
     
     func connectToPreviousPeripheral() {
@@ -190,7 +212,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
         switch central.state {
             case .poweredOn:
                 print("Bluetooth is powered on.")
-                connectToPreviousPeripheral()
+                self.connectToPreviousPeripheral()
             case .poweredOff:
                 print("Bluetooth is powered off.")
             case .resetting:
