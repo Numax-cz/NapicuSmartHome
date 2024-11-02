@@ -75,8 +75,8 @@ struct DevicesListView: View {
 }
 
 struct WiFiListView: View {
-    
-     let items: [String] = ["FreeWYFYNOVIRUS", "TvojeMamaJeWifi", "Nemamwifi", "MasterJeWiFy"]
+    @ObservedObject var bluetoothManager: BluetoothManager
+    let items: [String] = ["FreeWYFYNOVIRUS", "TvojeMamaJeWifi", "Nemamwifi", "MasterJeWiFy"]
     var body: some View {
         GeometryReader { geometry in
             VStack {
@@ -115,7 +115,8 @@ struct WiFiListView: View {
                         ) { wifi in
 
                             Button(action: {
-                                
+                       
+                                bluetoothManager.readWiFiList()
                             }) {
                                     Text(wifi)
                                         .fontWeight(.bold)
@@ -227,12 +228,12 @@ struct ContentView: View {
         if(bluetoothManager.isDeviceConnected() && (bluetoothManager.connectedPeripheral?.isConnectedToWiFi ?? false)) {
             DeviceAppView(bluetoothManager: bluetoothManager)
         }
-        else if( !(bluetoothManager.connectedPeripheral?.isConnectedToWiFi ?? false)) {
+        else if(bluetoothManager.isDeviceConnected() && !(bluetoothManager.connectedPeripheral?.isConnectedToWiFi ?? false)) {
             GeometryReader { geometry in
                 VStack {
                     Spacer()
                     
-                    WiFiListView()
+                    WiFiListView(bluetoothManager: bluetoothManager)
      
                     
                 }

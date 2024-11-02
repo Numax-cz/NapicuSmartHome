@@ -22,7 +22,10 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
     
     private var foundPeripherals: [DiscoveredPeripheral] = []
 
-    private var allowedUUIDS = [CBUUID(string: "cea986c2-4405-11ee-be56-0242ac120002")]
+    private var allowedUUIDS = [CBUUID(string: "73f4a352-06ff-4c15-aaf8-4a498e882d50")]
+    
+    private let wifiStateCharacteristicUUID = CBUUID(string: "803b6053-c7cf-4594-aa77-3ca2ff8d4a5e")
+    private let wifiListCharacteristicUUID = CBUUID(string: "fe8c0e2c-daab-4eb7-a0d1-057044d931c0")
     
     private var scanTimer: Timer?
     
@@ -146,6 +149,42 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
     func isDeviceConnected() -> Bool {
         return connectedPeripheral != nil
     }
+
+    func readWiFiState() {
+        guard let peripheral = connectedPeripheral?.peripheral else {
+            print("Není připojeno žádné zařízení.") //TODO
+            return
+        }
+   
+        if let services = peripheral.services {
+            for service in services {
+                if let characteristic = service.characteristics?.first(where: { $0.uuid == wifiStateCharacteristicUUID }) {
+                    peripheral.readValue(for: characteristic)
+                    return
+                }
+            }
+        }
+        
+        print("Charakteristika stavu Wi-Fi nenalezena.") //TODO
+    }
+
+    func readWiFiList() {
+        guard let peripheral = connectedPeripheral?.peripheral else {
+            print("Není připojeno žádné zařízení.") //TODO
+            return
+        }
+        
+        if let services = peripheral.services {
+            for service in services {
+                if let characteristic = service.characteristics?.first(where: { $0.uuid == wifiListCharacteristicUUID }) {
+                    peripheral.readValue(for: characteristic)
+                    return
+                }
+            }
+        }
+        
+        print("Charakteristika seznamu Wi-Fi nenalezena.") //TODO
+    }
 }
 
 extension BluetoothManager: CBCentralManagerDelegate {
@@ -187,6 +226,47 @@ extension BluetoothManager: CBCentralManagerDelegate {
         }
     }
     
+
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        if let error = error {
+            print("Error discovering services: \(error.localizedDescription)")
+            return
+        }
+        
+        guard let services = peripheral.services else {
+            print("No services found.")
+            return
+        }
+
+        for service in services {
+            print("Discovered service: \(service.uuid)")
+            peripheral.discoverCharacteristics(nil, for: service)
+        }
+    }
+
+    
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+        if let error = error {
+            print("Chyba při aktualizaci hodnoty: \(error.localizedDescription)") //TODO
+            return
+        }
+  
+        if let value = characteristic.value {
+            let dataString = String(data: value, encoding: .utf8) ?? "N/A"
+         
+            switch characteristic.uuid {
+            case wifiStateCharacteristicUUID:
+                print("Stav Wi-Fi: \(dataString)") //TODO
+           
+            case wifiListCharacteristicUUID:
+                print("Seznam Wi-Fi: \(dataString)") //TODO
+
+            default:
+                break
+            }
+        }
+    }
+
   
     
     // Successful
