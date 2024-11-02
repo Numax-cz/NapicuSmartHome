@@ -31,7 +31,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
     
     private var autoStopScanWork: DispatchWorkItem?
     
-    var connectedPeripheral: DeviceManager?
+    @Published var connectedPeripheral: DeviceManager?
     
     @Published public var alertManager = NapicuAlertManager()
     
@@ -70,13 +70,13 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
                 self?.updateScan()
             }
             
-            autoStopScanWork?.cancel()
+            self.autoStopScanWork?.cancel()
             
-            autoStopScanWork = DispatchWorkItem { [weak self] in
+            self.autoStopScanWork = DispatchWorkItem { [weak self] in
                 self?.stopScan()
             }
         
-            DispatchQueue.main.asyncAfter(deadline: .now() + 17.0, execute: autoStopScanWork!)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 17.0, execute: self.autoStopScanWork!)
         }
     }
     
@@ -85,6 +85,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
         self.centralManager?.stopScan()
         self.scanTimer?.invalidate()
         self.scanTimer = nil
+        self.autoStopScanWork?.cancel()
     }
     
     
@@ -116,7 +117,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
             if let peripheral = peripherals?.first {
                 peripheral.delegate = self
                 centralManager?.connect(peripheral, options: nil)
-                connectedPeripheral =  DeviceManager(peripheral: peripheral)
+                connectedPeripheral = DeviceManager(peripheral: peripheral)
                 UserDefaults.standard.set(uuid.uuidString, forKey: "previousConnectedDeviceUUID")
               } else {
                   alertManager = NapicuAlertManager(
@@ -124,7 +125,6 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
                       message: "Unable to find device",
                       primaryButtonAction: NapicuAlertButton(title: "ok", action: {})
                   )
-            
                   alertManager.show()
               }
         } else {
@@ -133,7 +133,6 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
                 message: "Bluetooth is not enabled",
                 primaryButtonAction: NapicuAlertButton(title: "ok", action: {})
             )
-      
             alertManager.show()
         }
     }
@@ -142,7 +141,6 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
         if let savedUUIDString = UserDefaults.standard.string(forKey: "previousConnectedDeviceUUID"),
            let uuid = UUID(uuidString: savedUUIDString) {
             connectToPeripheral(with: uuid)
-        
         }
     }
     
@@ -317,5 +315,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
         } else {
             print("Device was disconnected.")
         }
+        
+        connectedPeripheral = nil
     }
 }
