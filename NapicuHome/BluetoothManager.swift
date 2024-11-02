@@ -152,7 +152,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
 
     func readWiFiState() {
         guard let peripheral = connectedPeripheral?.peripheral else {
-            print("Není připojeno žádné zařízení.") //TODO
+            print("No device connected.")
             return
         }
    
@@ -165,12 +165,12 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
             }
         }
         
-        print("Charakteristika stavu Wi-Fi nenalezena.") //TODO
+        print("Characteristic about the status of the Wi-Fi network not found.")
     }
 
     func readWiFiList() {
         guard let peripheral = connectedPeripheral?.peripheral else {
-            print("Není připojeno žádné zařízení.") //TODO
+            print("No device connected.")
             return
         }
         
@@ -183,7 +183,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
             }
         }
         
-        print("Charakteristika seznamu Wi-Fi nenalezena.") //TODO
+        print("Characteristic of the Wi-Fi network list not found.")
     }
 }
 
@@ -225,7 +225,6 @@ extension BluetoothManager: CBCentralManagerDelegate {
             }
         }
     }
-    
 
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if let error = error {
@@ -247,7 +246,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
     
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         if let error = error {
-            print("Chyba při aktualizaci hodnoty: \(error.localizedDescription)") //TODO
+            print("Error when updating the value: \(error.localizedDescription)") //TODO
             return
         }
   
@@ -256,18 +255,16 @@ extension BluetoothManager: CBCentralManagerDelegate {
          
             switch characteristic.uuid {
             case wifiStateCharacteristicUUID:
-                print("Stav Wi-Fi: \(dataString)") //TODO
+                print("WiFi - state")
+                
            
             case wifiListCharacteristicUUID:
-                print("Seznam Wi-Fi: \(dataString)") //TODO
-
+                print("WiFi - list")
             default:
                 break
             }
         }
     }
-
-  
     
     // Successful
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
