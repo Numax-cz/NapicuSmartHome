@@ -26,6 +26,15 @@ void NapicuHome::begin_ble(const char *deviceName, const char *service_uuid, con
                                                  
     wifiStateCharacteristic->setCallbacks(new NapicuHome::WiFiStateCharacteristicCallback());
 
+
+    BLECharacteristic *wifiListCharacteristic = NapicuHome::ble_service->createCharacteristic(
+        "fe8c0e2c-daab-4eb7-a0d1-057044d931c0",
+        BLECharacteristic::PROPERTY_READ
+    );
+                                                 
+    wifiListCharacteristic->setCallbacks(new NapicuHome::WiFiListCharacteristicCallback());
+
+
     NapicuHome::ble_service->start();
 
     NapicuHome::ble_advertising = BLEDevice::getAdvertising();

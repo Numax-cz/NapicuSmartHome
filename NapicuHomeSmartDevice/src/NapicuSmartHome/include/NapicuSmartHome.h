@@ -65,7 +65,14 @@ private:
     public:
         void onRead(BLECharacteristic *pCharacteristic); 
     };
-
+    /**
+     * @brief Characteristics for network status query 
+     * 
+     */
+    class WiFiListCharacteristicCallback : public BLECharacteristicCallbacks {
+    public:
+        void onRead(BLECharacteristic *pCharacteristic); 
+    };
     /**
      * @brief Returns whether the data from the wifi network is saved.
      * But not if the device is connected!
