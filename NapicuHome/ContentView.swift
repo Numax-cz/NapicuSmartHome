@@ -227,10 +227,11 @@ struct ContentView: View {
 
     var body: some View {
         if let connectedPeripheral = bluetoothManager.connectedPeripheral {
-            if((bluetoothManager.connectedPeripheral?.wifiStatus == .connected)) {
+            if(bluetoothManager.connectedPeripheral?.wifiStatus == .connected) {
                 DeviceAppView(bluetoothManager: bluetoothManager)
             }
-            else if(!(bluetoothManager.connectedPeripheral?.wifiStatus == .noCredentials)) {
+            else if(bluetoothManager.connectedPeripheral?.wifiStatus == .noCredentials) {
+                
                 GeometryReader { geometry in
                     VStack {
                         Spacer()
