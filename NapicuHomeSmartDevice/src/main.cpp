@@ -1,9 +1,6 @@
 #include <NapicuSmartHome/include/NapicuSmartHome.h>
 #include <led.h>
 
-
-
-
 // d193a3d7-a2f1-4961-8bd6-b7ba1df14701
 // 210a69c9-eb1f-4f2a-b567-42bb92ba37cd
 // 2cc4c853-b10f-4008-ac26-4bb4a0325181
@@ -17,9 +14,16 @@
 #define DEFAULT_BLE_NAME "NapicuSmartHome"
 #define SERVICE_UUID "73f4a352-06ff-4c15-aaf8-4a498e882d50" 
 
+/**
+ * Specifies the UUID used to retrieve the Wi-Fi status
+ * from the connected device.
+ */
 #define CHARACTERISTIC_WIFI_STATE_UUID "803b6053-c7cf-4594-aa77-3ca2ff8d4a5e"
+/**
+ * Specifies the UUID used to retrieve the list of available
+ * Wi-Fi networks from the connected device.
+ */
 #define CHARACTERISTIC_WIFI_LIST_UUID "fe8c0e2c-daab-4eb7-a0d1-057044d931c0"
-
 
 void setup() {
     Serial.begin(115200);

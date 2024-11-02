@@ -22,11 +22,6 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
     
     private var foundPeripherals: [DiscoveredPeripheral] = []
 
-    private var allowedUUIDS = [CBUUID(string: "73f4a352-06ff-4c15-aaf8-4a498e882d50")]
-    
-    private let wifiStateCharacteristicUUID = CBUUID(string: "803b6053-c7cf-4594-aa77-3ca2ff8d4a5e")
-    private let wifiListCharacteristicUUID = CBUUID(string: "fe8c0e2c-daab-4eb7-a0d1-057044d931c0")
-    
     private var scanTimer: Timer?
     
     private var autoStopScanWork: DispatchWorkItem?
@@ -65,8 +60,8 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
         if(!self.scanning && centralManager?.state == .poweredOn) {
             self.centralManager?.scanForPeripherals(withServices: nil)
             self.scanning = true
-         
-            self.scanTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
+            
+            self.scanTimer = Timer.scheduledTimer(withTimeInterval: Config.BL_PAIR_UPDATE_SCAN_INTERVAL, repeats: true) { [weak self] _ in
                 self?.updateScan()
             }
             
@@ -76,7 +71,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
                 self?.stopScan()
             }
         
-            DispatchQueue.main.asyncAfter(deadline: .now() + 17.0, execute: self.autoStopScanWork!)
+            DispatchQueue.main.asyncAfter(deadline: .now() + Config.BL_PAIR_SCAN_TIME_OUT, execute: self.autoStopScanWork!)
         }
     }
     
@@ -96,7 +91,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
             let currentDate = Date()
 
             foundPeripherals.removeAll { peripheral in
-                let isExpired = currentDate.timeIntervalSince(peripheral.lastUpdate) > 3.0
+                let isExpired = currentDate.timeIntervalSince(peripheral.lastUpdate) > Config.BL_PAIR_PERIPHERAL_EXPIRATION_TIME
                 if isExpired {
                     foundPeripheralsNames.removeAll { $0.name == peripheral.peripheral.name }
                     print("Removed \(peripheral.peripheral.name ?? "Unknown")")
@@ -118,7 +113,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
                 centralManager?.connect(peripheral, options: nil)
              
                 let source = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
-                source.schedule(deadline: .now(), repeating: 0.5)
+                source.schedule(deadline: .now(), repeating: Config.BL_PAIR_PERIPHERAL_CHECK_STATE_INTERVAL)
 
                 source.setEventHandler { [weak self] in
                     guard let self = self else { return }
@@ -132,7 +127,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
                 
                 source.resume()
 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
+                DispatchQueue.main.asyncAfter(deadline: .now() + Config.BL_PAIR_CONNECTION_TIMEOUT) { [weak self] in
                     if peripheral.state != .connected {
                         print("Connection timed out")
                         self?.centralManager?.cancelPeripheralConnection(peripheral)
@@ -178,7 +173,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
    
         if let services = peripheral.services {
             for service in services {
-                if let characteristic = service.characteristics?.first(where: { $0.uuid == wifiStateCharacteristicUUID }) {
+                if let characteristic = service.characteristics?.first(where: { $0.uuid == Config.BL_WIFI_STATE_CHARACTERISTIC_UUID }) {
                     peripheral.readValue(for: characteristic)
                     return
                 }
@@ -196,7 +191,7 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
         
         if let services = peripheral.services {
             for service in services {
-                if let characteristic = service.characteristics?.first(where: { $0.uuid == wifiListCharacteristicUUID }) {
+                if let characteristic = service.characteristics?.first(where: { $0.uuid == Config.BL_WIFI_LIST_CHARACTERISTIC_UUID }) {
                     peripheral.readValue(for: characteristic)
                     return
                 }
@@ -236,7 +231,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
         }
 
         if let serviceUUIDs = advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] {
-            if serviceUUIDs.contains(where: { allowedUUIDS.contains($0) }) {
+            if serviceUUIDs.contains(where: { Config.BL_ALLOWED_UUIDS.contains($0) }) {
                 if let name = peripheral.name {
                     foundPeripherals.append(DiscoveredPeripheral(peripheral: peripheral, lastUpdate: Date()))
                     
@@ -303,10 +298,10 @@ extension BluetoothManager: CBCentralManagerDelegate {
             let dataString = String(data: value, encoding: .utf8) ?? "N/A"
          
             switch characteristic.uuid {
-            case wifiStateCharacteristicUUID:
+            case Config.BL_WIFI_STATE_CHARACTERISTIC_UUID:
                 print("WiFi - state")
             
-            case wifiListCharacteristicUUID:
+            case Config.BL_WIFI_LIST_CHARACTERISTIC_UUID:
                 print("WiFi - list")
                 connectedPeripheral?.nearbyNetworks =  dataString.components(separatedBy: ",")
             default:
