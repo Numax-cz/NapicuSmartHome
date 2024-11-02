@@ -226,6 +226,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
         }
     }
 
+    //Register services ("on init")
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if let error = error {
             print("Error discovering services: \(error.localizedDescription)")
@@ -242,6 +243,34 @@ extension BluetoothManager: CBCentralManagerDelegate {
             peripheral.discoverCharacteristics(nil, for: service)
         }
     }
+    
+    //Register characteristics ("on init")
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+        if let error = error {
+            print("Error discovering characteristics: \(error.localizedDescription)")
+            return
+        }
+
+        guard let characteristics = service.characteristics else {
+            print("No characteristics found.")
+            return
+        }
+
+        for characteristic in characteristics {
+            print("Discovered characteristic: \(characteristic.uuid)")
+            
+         
+            if characteristic.properties.contains(.notify) {
+                peripheral.setNotifyValue(true, for: characteristic)
+            }
+            
+            //Todo - Odstranit a veškeré init ready dát do scén.. optimalizace
+            //Todo - Zde pouse pro debuggovací účely
+            if characteristic.properties.contains(.read) {
+               peripheral.readValue(for: characteristic)
+            }
+        }
+    }
 
     
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
@@ -256,10 +285,10 @@ extension BluetoothManager: CBCentralManagerDelegate {
             switch characteristic.uuid {
             case wifiStateCharacteristicUUID:
                 print("WiFi - state")
-                
-           
+            
             case wifiListCharacteristicUUID:
                 print("WiFi - list")
+                connectedPeripheral?.nearbyNetworks =  dataString.components(separatedBy: ",")
             default:
                 break
             }

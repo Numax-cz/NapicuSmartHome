@@ -76,7 +76,8 @@ struct DevicesListView: View {
 
 struct WiFiListView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
-    let items: [String] = ["FreeWYFYNOVIRUS", "TvojeMamaJeWifi", "Nemamwifi", "MasterJeWiFy"]
+    @ObservedObject var deviceManager: DeviceManager
+
     var body: some View {
         GeometryReader { geometry in
             VStack {
@@ -111,12 +112,12 @@ struct WiFiListView: View {
                 ScrollView {
                     VStack {
                         ForEach(
-                            items, id: \.self
+                            deviceManager.nearbyNetworks , id: \.self
                         ) { wifi in
 
                             Button(action: {
                        
-                                bluetoothManager.readWiFiList()
+                              
                             }) {
                                     Text(wifi)
                                         .fontWeight(.bold)
@@ -232,9 +233,10 @@ struct ContentView: View {
             GeometryReader { geometry in
                 VStack {
                     Spacer()
-                    
-                    WiFiListView(bluetoothManager: bluetoothManager)
-     
+                    //TODO fix up
+                    if let connectedPeripheral =  bluetoothManager.connectedPeripheral {
+                        WiFiListView(bluetoothManager: bluetoothManager, deviceManager: connectedPeripheral)
+                    }
                     
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
