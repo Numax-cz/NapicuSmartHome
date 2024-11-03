@@ -78,7 +78,7 @@ struct DevicesListView: View {
 struct WiFiListView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
     @State var deviceManager: DeviceManager? //TODO Edit ObservedObject
-    @State private var selectedWiFi: String?
+    @State private var selectedWiFi: String? = "aster"
     @FocusState private var isPasswordFocused: Bool
     @State private var wifiPasswordUserInput: String = ""
     //TODO odstranit
@@ -86,6 +86,33 @@ struct WiFiListView: View {
 
     var body: some View {
         GeometryReader { geometry in
+            if(selectedWiFi != nil) {
+                HStack {
+                    Button(action: {
+                        selectedWiFi = nil
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .resizable()
+                            .scaledToFit()
+                     
+                            .foregroundColor(Color.black.opacity(0.7))
+                            .frame(
+                                width: geometry.size.height
+                                > geometry.size.width
+                                ? geometry.size.width * 0.045
+                                : geometry.size.width * 0.045)
+                            .padding(.leading, geometry.size.height
+                                     > geometry.size.width
+                                     ? geometry.size.width * 0.07
+                                     : geometry.size.height * 0.07)
+                            .padding(.top, geometry.size.height
+                                     < geometry.size.width
+                                     ? geometry.size.width * 0.015
+                                     : geometry.size.height * 0.015)
+                    }.contentShape(Rectangle())
+                }
+            }
+        
             VStack {
                 Spacer()
                 Image(systemName: "wifi")
@@ -173,7 +200,36 @@ struct WiFiListView: View {
                             .padding(.vertical, 2)
                             .foregroundStyle(.black)
                         
-                    
+                        VStack {
+                            
+                            Button(action: {}) {
+                                Text("Connect")
+                                
+                                    .fontWeight(.bold)
+                                    .padding()
+                                    .font(
+                                        .system(
+                                            size: geometry.size.height
+                                                > geometry.size.width
+                                                ? geometry.size.width * 0.04
+                                                : geometry.size.height * 0.04)
+                                    )
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                            }.disabled(wifiPasswordUserInput.count < 8)
+            
+                            }
+                            .frame(
+                                width: geometry.size.height
+                                    > geometry.size.width
+                                    ? geometry.size.width * 0.4
+                                    : geometry.size.width * 0.4,
+                                alignment: .leading
+                            )
+                            .background(wifiPasswordUserInput.count < 8 ? Color.gray : Color.blue)
+                            .foregroundStyle(wifiPasswordUserInput.count < 8 ? Color.white.opacity(0.6) : Color.white)
+                            .cornerRadius(10)
+                            .padding(.vertical, 2)
+                            .padding(.top, 20)
                         Spacer()
                     } else {
                         ScrollView {
@@ -219,13 +275,11 @@ struct WiFiListView: View {
                                ? geometry.size.width * 0.11
                                : geometry.size.height * 0.11)
                     }
-
-                    
-     
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.top, 10)
             }
+                
         }
     }
 }
