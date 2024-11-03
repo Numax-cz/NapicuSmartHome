@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreBluetooth
 
 struct DevicesListView: View {
 
@@ -76,7 +77,12 @@ struct DevicesListView: View {
 
 struct WiFiListView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
-    @ObservedObject var deviceManager: DeviceManager
+    @State var deviceManager: DeviceManager? //TODO Edit ObservedObject
+    @State private var selectedWiFi: String?
+    @FocusState private var isPasswordFocused: Bool
+    @State private var wifiPasswordUserInput: String = ""
+    //TODO odstranit
+    var preview_networks: [String] = ["WiFiPreview1", "WiFiPreview2", "WiFiPreview3", "WiFiPreview4", "WiFiPreview5", "WiFiPreview6", "WiFiPreview7", "WiFiPreview8", "WiFiPreview9", "WiFiPreview10"]
 
     var body: some View {
         GeometryReader { geometry in
@@ -95,7 +101,7 @@ struct WiFiListView: View {
                              < geometry.size.width
                              ? geometry.size.width * 0.04
                              : geometry.size.height * 0.04)
-                Text("Connect a smart device to your wifi")
+                Text(selectedWiFi != nil ? "Enter password for \(selectedWiFi!)" : "Connect a smart device to your WiFi")
                     .fontWeight(.bold)
                     .padding(.top, geometry.size.height
                              < geometry.size.width
@@ -108,28 +114,88 @@ struct WiFiListView: View {
                                 ? geometry.size.width * 0.04
                                 : geometry.size.height * 0.04)
                     )
-              
-                ScrollView {
-                    VStack {
-                        ForEach(
-                            deviceManager.nearbyNetworks , id: \.self
-                        ) { wifi in
-
-                            Button(action: {
-                       
-                              
-                            }) {
-                                    Text(wifi)
-                                        .fontWeight(.bold)
-                                        .padding()
-                                        .font(
-                                            .system(
-                                                size: geometry.size.height
-                                                    > geometry.size.width
-                                                    ? geometry.size.width * 0.04
-                                                    : geometry.size.height * 0.04)
-                                        )
+                VStack {
+                    if let wifi_name = selectedWiFi {
+                        VStack {
+                            Text(wifi_name)
+                            
+                                .fontWeight(.bold)
+                                .padding()
+                                .font(
+                                    .system(
+                                        size: geometry.size.height
+                                            > geometry.size.width
+                                            ? geometry.size.width * 0.04
+                                            : geometry.size.height * 0.04)
+                                )
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .frame(
+                                width: geometry.size.height
+                                    > geometry.size.width
+                                    ? geometry.size.width * 0.8
+                                    : geometry.size.width * 0.8,
+                                alignment: .leading
+                            )
+                            .background(Color.black.opacity(0.1))
+                            .cornerRadius(10)
+                            .padding(.vertical, 2)
+                            .foregroundStyle(.black)
+                        
+                        
+                        VStack {
+                            SecureField("Enter password", text: $wifiPasswordUserInput)
+                            
+                                .fontWeight(.bold)
+                                .padding()
+                                .font(
+                                    .system(
+                                        size: geometry.size.height
+                                            > geometry.size.width
+                                            ? geometry.size.width * 0.04
+                                            : geometry.size.height * 0.04)
+                                )
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .focused($isPasswordFocused)
+                                .onAppear {
+                                    isPasswordFocused = true
                                 }
+                            }
+                            .frame(
+                                width: geometry.size.height
+                                    > geometry.size.width
+                                    ? geometry.size.width * 0.8
+                                    : geometry.size.width * 0.8,
+                                alignment: .leading
+                            )
+                            .background(Color.black.opacity(0.1))
+                            .cornerRadius(10)
+                            .padding(.vertical, 2)
+                            .foregroundStyle(.black)
+                        
+                    
+                        Spacer()
+                    } else {
+                        ScrollView {
+                            VStack {
+                                ForEach(
+                                    deviceManager?.nearbyNetworks ?? preview_networks, id: \.self
+                                ) { wifi in
+                                    Button(action: {
+                                        selectedWiFi = wifi
+                                    }) {
+                                            Text(wifi)
+                                                .fontWeight(.bold)
+                                                .padding()
+                                                .font(
+                                                    .system(
+                                                        size: geometry.size.height
+                                                            > geometry.size.width
+                                                            ? geometry.size.width * 0.04
+                                                            : geometry.size.height * 0.04)
+                                                )
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
                                     .frame(
                                         width: geometry.size.height
                                             > geometry.size.width
@@ -137,16 +203,28 @@ struct WiFiListView: View {
                                             : geometry.size.width * 0.8,
                                         alignment: .leading
                                     )
+                                   
                                     .background(Color.black.opacity(0.1))
                                     .cornerRadius(10)
                                     .padding(.vertical, 2)
                                     .foregroundStyle(.black)
+                                }
+                            }
+                            .padding(10)
+                           
                         }
+                        .padding(.bottom,
+                                geometry.size.height
+                               < geometry.size.width
+                               ? geometry.size.width * 0.11
+                               : geometry.size.height * 0.11)
                     }
-                    .padding(10)
-                    .padding(.top, 40.0)
+
+                    
+     
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.top, 10)
             }
         }
     }
@@ -287,12 +365,15 @@ struct ContentView: View {
                        isPresented: $bluetoothManager.alertManager.isAlertPresented)
             }
         }
-        
-
     }
 }
 
+
+
+
 #Preview {
     //DeviceAppView(bluetoothManager: BluetoothManager())
-    ContentView()
+    //ContentView()
+    
+    WiFiListView(bluetoothManager: BluetoothManager())
 }

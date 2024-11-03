@@ -161,44 +161,9 @@ class BluetoothManager: NSObject, ObservableObject, CBPeripheralDelegate {
         }
     }
     
+    
     func isDeviceConnected() -> Bool {
         return connectedPeripheral != nil
-    }
-
-    func readWiFiState() {
-        guard let peripheral = connectedPeripheral?.peripheral else {
-            print("No device connected.")
-            return
-        }
-   
-        if let services = peripheral.services {
-            for service in services {
-                if let characteristic = service.characteristics?.first(where: { $0.uuid == Config.BL_WIFI_STATE_CHARACTERISTIC_UUID }) {
-                    peripheral.readValue(for: characteristic)
-                    return
-                }
-            }
-        }
-        
-        print("Characteristic about the status of the Wi-Fi network not found.")
-    }
-
-    func readWiFiList() {
-        guard let peripheral = connectedPeripheral?.peripheral else {
-            print("No device connected.")
-            return
-        }
-        
-        if let services = peripheral.services {
-            for service in services {
-                if let characteristic = service.characteristics?.first(where: { $0.uuid == Config.BL_WIFI_LIST_CHARACTERISTIC_UUID }) {
-                    peripheral.readValue(for: characteristic)
-                    return
-                }
-            }
-        }
-        
-        print("Characteristic of the Wi-Fi network list not found.")
     }
 }
 

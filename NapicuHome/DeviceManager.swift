@@ -28,7 +28,40 @@ class DeviceManager: ObservableObject {
      */
     @Published public var nearbyNetworks: [String] = []
     
+    @Published public var connectedWiFi: String?
+    
     init(peripheral: CBPeripheral) {
         self.peripheral = peripheral
+    }
+    
+    
+    func readWiFiState() {
+        if let services = self.peripheral.services {
+            for service in services {
+                if let characteristic = service.characteristics?.first(where: { $0.uuid == Config.BL_WIFI_STATE_CHARACTERISTIC_UUID }) {
+                    self.peripheral.readValue(for: characteristic)
+                    return
+                }
+            }
+        }
+        
+        print("Characteristic about the status of the Wi-Fi network not found.")
+    }
+
+    func readWiFiList() {
+        if let services = self.peripheral.services {
+            for service in services {
+                if let characteristic = service.characteristics?.first(where: { $0.uuid == Config.BL_WIFI_LIST_CHARACTERISTIC_UUID }) {
+                    peripheral.readValue(for: characteristic)
+                    return
+                }
+            }
+        }
+        
+        print("Characteristic of the Wi-Fi network list not found.")
+    }
+    
+    func connectToWiFi(ssid: String) {
+        
     }
 }
