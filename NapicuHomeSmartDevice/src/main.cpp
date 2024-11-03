@@ -29,7 +29,7 @@ void setup() {
     Serial.begin(115200);
 
     //Bluetooth
-    NapicuHome::begin_ble(DEFAULT_BLE_NAME, SERVICE_UUID, CHARACTERISTIC_WIFI_STATE_UUID);
+    NapicuHome::begin_ble(DEFAULT_BLE_NAME, SERVICE_UUID, CHARACTERISTIC_WIFI_STATE_UUID, CHARACTERISTIC_WIFI_LIST_UUID);
 
     //Homekit 
     homeSpan.setLogLevel(-1);

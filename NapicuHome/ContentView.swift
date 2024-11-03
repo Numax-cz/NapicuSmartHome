@@ -77,12 +77,10 @@ struct DevicesListView: View {
 
 struct WiFiListView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
-    @State var deviceManager: DeviceManager? //TODO Edit ObservedObject
-    @State private var selectedWiFi: String? = "aster"
+    @ObservedObject var deviceManager: DeviceManager
+    @State private var selectedWiFi: String?
     @FocusState private var isPasswordFocused: Bool
     @State private var wifiPasswordUserInput: String = ""
-    //TODO odstranit
-    var preview_networks: [String] = ["WiFiPreview1", "WiFiPreview2", "WiFiPreview3", "WiFiPreview4", "WiFiPreview5", "WiFiPreview6", "WiFiPreview7", "WiFiPreview8", "WiFiPreview9", "WiFiPreview10"]
 
     var body: some View {
         GeometryReader { geometry in
@@ -235,7 +233,7 @@ struct WiFiListView: View {
                         ScrollView {
                             VStack {
                                 ForEach(
-                                    deviceManager?.nearbyNetworks ?? preview_networks, id: \.self
+                                    deviceManager.nearbyNetworks, id: \.self
                                 ) { wifi in
                                     Button(action: {
                                         selectedWiFi = wifi
@@ -429,5 +427,5 @@ struct ContentView: View {
     //DeviceAppView(bluetoothManager: BluetoothManager())
     //ContentView()
     
-    WiFiListView(bluetoothManager: BluetoothManager())
+    //WiFiListView(bluetoothManager: BluetoothManager())
 }

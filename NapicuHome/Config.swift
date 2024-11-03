@@ -24,7 +24,7 @@ struct Config {
      * Specifies the UUID used to retrieve the list of available
      * Wi-Fi networks from the connected device.
      */
-    static let BL_WIFI_LIST_CHARACTERISTIC_UUID: CBUUID = CBUUID(string: "803b6053-c7cf-4594-aa77-3ca2ff8d4a5e")
+    static let BL_WIFI_LIST_CHARACTERISTIC_UUID: CBUUID = CBUUID(string: "fe8c0e2c-daab-4eb7-a0d1-057044d931c0")
     
     
     /**

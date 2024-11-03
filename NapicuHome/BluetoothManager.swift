@@ -267,7 +267,7 @@ extension BluetoothManager: CBCentralManagerDelegate {
                 print("WiFi - state")
             
             case Config.BL_WIFI_LIST_CHARACTERISTIC_UUID:
-                print("WiFi - list")
+                print("WiFi - \(dataString)")
                 connectedPeripheral?.nearbyNetworks =  dataString.components(separatedBy: ",")
             default:
                 break

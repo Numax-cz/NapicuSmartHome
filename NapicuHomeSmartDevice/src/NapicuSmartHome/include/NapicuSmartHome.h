@@ -37,8 +37,9 @@ public:
      * @param deviceName Name that will be displayed
      * @param service_uuid Service UUID
      * @param wifi_state_uuid UUID service for getting wifi network statuses 
+     * @param wifi_list_uuid UUID service for getting wifi networks nearby
      */
-    static void begin_ble(const char *deviceName, const char *service_uuid, const char* wifi_state_uuid);
+    static void begin_ble(const char *deviceName, const char *service_uuid, const char* wifi_state_uuid, const char* wifi_list_uuid);
     /**
      * @brief Get the wifi status
      * 

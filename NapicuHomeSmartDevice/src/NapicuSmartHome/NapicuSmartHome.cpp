@@ -12,7 +12,7 @@ void NapicuHome::begin_home(const char *pairingCode, Category catID, const char 
     WiFi.onEvent(NapicuHome::on_wifi_event);
 }
 
-void NapicuHome::begin_ble(const char *deviceName, const char *service_uuid, const char* wifi_state_uuid) {
+void NapicuHome::begin_ble(const char *deviceName, const char *service_uuid, const char* wifi_state_uuid, const char* wifi_list_uuid) {
     BLEDevice::init(deviceName);
     BLEDevice::setCustomGapHandler(NapicuHome::ble_gap_event_handler);
     NapicuHome::ble_server = BLEDevice::createServer();
@@ -28,7 +28,7 @@ void NapicuHome::begin_ble(const char *deviceName, const char *service_uuid, con
 
 
     BLECharacteristic *wifiListCharacteristic = NapicuHome::ble_service->createCharacteristic(
-        "fe8c0e2c-daab-4eb7-a0d1-057044d931c0",
+        wifi_list_uuid,
         BLECharacteristic::PROPERTY_READ
     );
                                                  
