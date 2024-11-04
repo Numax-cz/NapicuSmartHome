@@ -268,7 +268,19 @@ extension BluetoothManager: CBCentralManagerDelegate {
             
             case Config.BL_WIFI_LIST_CHARACTERISTIC_UUID:
                 print("WiFi - \(dataString)")
-                connectedPeripheral?.nearbyNetworks =  dataString.components(separatedBy: ",")
+                
+                let parts = dataString.split(separator: ",")
+                var nearbyNetworks: [WiFiInformations] = []
+
+                for index in stride(from: 0, to: parts.count, by: 2) {
+                    if let auth_mode = Int(parts[index + 1]) {
+                        let ssid = String(parts[index])
+                        nearbyNetworks.append(WiFiInformations(ssid: ssid, auth_mode: auth_mode))
+                    }
+                }
+                
+                connectedPeripheral?.nearbyNetworks =  nearbyNetworks
+                
             default:
                 break
             }

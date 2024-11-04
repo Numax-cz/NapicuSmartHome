@@ -6,6 +6,11 @@
 //
 import CoreBluetooth
 
+struct WiFiInformations {
+    let ssid: String
+    let auth_mode: Int
+}
+
 class DeviceManager: ObservableObject {
     /**
      * ESP32 WiFi connection status types
@@ -15,6 +20,8 @@ class DeviceManager: ObservableObject {
           case connected = 1     // ESP32 is connected to WiFi
           case disconnected = 2   // ESP32 is disconnected from WiFi
       }
+    
+    
 
     /**
      * Device peripherals
@@ -26,7 +33,7 @@ class DeviceManager: ObservableObject {
     /**
      * Available networks nearby
      */
-    @Published public var nearbyNetworks: [String] = []
+    @Published public var nearbyNetworks: [WiFiInformations] = []
     
     @Published public var connectedWiFi: String?
     

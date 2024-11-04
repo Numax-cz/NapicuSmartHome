@@ -81,6 +81,7 @@ struct WiFiListView: View {
     @State private var selectedWiFi: String?
     @FocusState private var isPasswordFocused: Bool
     @State private var wifiPasswordUserInput: String = ""
+    
 
     var body: some View {
         GeometryReader { geometry in
@@ -143,7 +144,6 @@ struct WiFiListView: View {
                     if let wifi_name = selectedWiFi {
                         VStack {
                             Text(wifi_name)
-                            
                                 .fontWeight(.bold)
                                 .padding()
                                 .font(
@@ -233,12 +233,17 @@ struct WiFiListView: View {
                         ScrollView {
                             VStack {
                                 ForEach(
-                                    deviceManager.nearbyNetworks, id: \.self
+                                    deviceManager.nearbyNetworks, id: \.ssid
                                 ) { wifi in
                                     Button(action: {
-                                        selectedWiFi = wifi
+                                        if(wifi.auth_mode == 0){
+                                        //TODO
+                                        } else {
+                                            selectedWiFi = wifi.ssid
+                                        }
                                     }) {
-                                            Text(wifi)
+                                        HStack {
+                                            Text(wifi.ssid)
                                                 .fontWeight(.bold)
                                                 .padding()
                                                 .font(
@@ -246,10 +251,18 @@ struct WiFiListView: View {
                                                         size: geometry.size.height
                                                             > geometry.size.width
                                                             ? geometry.size.width * 0.04
-                                                            : geometry.size.height * 0.04)
-                                                )
+                                                            : geometry.size.height * 0.04))
                                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                            Spacer()
+                                            Image(systemName: "lock.fill")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 20, height: 20)
+                                                .foregroundColor(wifi.auth_mode == 0 ? Color.clear :  Color.black.opacity(0.8))
+                                                .padding()
                                         }
+
+                                    }
                                     .frame(
                                         width: geometry.size.height
                                             > geometry.size.width
@@ -425,7 +438,6 @@ struct ContentView: View {
 
 #Preview {
     //DeviceAppView(bluetoothManager: BluetoothManager())
-    //ContentView()
-    
+    ContentView()
     //WiFiListView(bluetoothManager: BluetoothManager())
 }
