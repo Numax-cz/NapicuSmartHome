@@ -12,15 +12,15 @@ void NapicuHome::begin_home(const char *pairingCode, Category catID, const char 
     WiFi.onEvent(NapicuHome::on_wifi_event);
 }
 
-void NapicuHome::begin_ble(const char *deviceName, const char *service_uuid, const char* wifi_state_uuid, const char* wifi_list_uuid) {
+void NapicuHome::begin_ble(const char *deviceName) {
     BLEDevice::init(deviceName);
     BLEDevice::setCustomGapHandler(NapicuHome::ble_gap_event_handler);
     NapicuHome::ble_server = BLEDevice::createServer();
     NapicuHome::ble_server->setCallbacks(new NapicuHome::ServerCallBack());
-    NapicuHome::ble_service = NapicuHome::ble_server->createService(service_uuid);
+    NapicuHome::ble_service = NapicuHome::ble_server->createService(SERVICE_UUID);
 
     BLECharacteristic *wifiStateCharacteristic = NapicuHome::ble_service->createCharacteristic(
-        wifi_state_uuid,
+        CHARACTERISTIC_WIFI_STATE_UUID,
         BLECharacteristic::PROPERTY_READ
     );
                                                  
@@ -28,7 +28,7 @@ void NapicuHome::begin_ble(const char *deviceName, const char *service_uuid, con
 
 
     BLECharacteristic *wifiListCharacteristic = NapicuHome::ble_service->createCharacteristic(
-        wifi_list_uuid,
+        CHARACTERISTIC_WIFI_LIST_UUID,
         BLECharacteristic::PROPERTY_READ
     );
                                                  
@@ -38,7 +38,7 @@ void NapicuHome::begin_ble(const char *deviceName, const char *service_uuid, con
     NapicuHome::ble_service->start();
 
     NapicuHome::ble_advertising = BLEDevice::getAdvertising();
-    NapicuHome::ble_advertising->addServiceUUID(service_uuid);
+    NapicuHome::ble_advertising->addServiceUUID(SERVICE_UUID);
     NapicuHome::ble_advertising->setScanResponse(true);
     NapicuHome::ble_advertising->setMinPreferred(0x06);  
     NapicuHome::ble_advertising->setMinPreferred(0x12);

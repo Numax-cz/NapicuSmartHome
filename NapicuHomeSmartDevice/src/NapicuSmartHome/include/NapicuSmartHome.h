@@ -4,6 +4,7 @@
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
+#include <NapicuSmartHome/include/config.h>
 
 
 class NapicuHome {
@@ -35,11 +36,8 @@ public:
      * @brief Starts Bluetooth low energy service
      * 
      * @param deviceName Name that will be displayed
-     * @param service_uuid Service UUID
-     * @param wifi_state_uuid UUID service for getting wifi network statuses 
-     * @param wifi_list_uuid UUID service for getting wifi networks nearby
      */
-    static void begin_ble(const char *deviceName, const char *service_uuid, const char* wifi_state_uuid, const char* wifi_list_uuid);
+    static void begin_ble(const char *deviceName);
     /**
      * @brief Get the wifi status
      * 
