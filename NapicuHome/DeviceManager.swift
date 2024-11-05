@@ -11,6 +11,8 @@ struct WiFiInformations {
     let auth_mode: Int
 }
 
+
+
 class DeviceManager: ObservableObject {
     /**
      * ESP32 WiFi connection status types
@@ -21,6 +23,14 @@ class DeviceManager: ObservableObject {
           case disconnected = 2   // ESP32 is disconnected from WiFi
       }
     
+    /**
+     * ESP32 Wi-Fi authentication status types
+     */
+    enum WiFiAuth: Int {
+        case authSuccess = 0   // Wi-Fi authentication was successful
+        case authFailed = 1    // Wi-Fi authentication failed (incorrect password or other issues)
+        case authPending = 2   // Wi-Fi authentication is pending or in progress
+    }
 
     /**
      * Device peripherals

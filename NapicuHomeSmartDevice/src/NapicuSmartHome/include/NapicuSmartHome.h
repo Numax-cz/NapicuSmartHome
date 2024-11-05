@@ -18,6 +18,16 @@ public:
         WiFiConnected=1,        /* ESP32 is connected to WiFi */
         WiFiDisconected=2       /* ESP32 is disconnected from WiFi */
     };
+    /**
+     * @brief ESP32 Wi-Fi authentication status types
+     * 
+     */
+    enum class WiFiAuth {
+        AuthSuccess = 0,  /* Wi-Fi authentication was successful */
+        AuthFailed = 1,   /* Wi-Fi authentication failed (incorrect password or other issues) */
+        AuthPending = 2   /* Wi-Fi authentication is pending or in progress */
+    };
+
 
     /**
      * @brief Starts service for apple homekit
@@ -112,7 +122,7 @@ private:
      * 
      * @param event Wi-Fi event
      */
-    static void on_wifi_event(WiFiEvent_t event);
+    static void on_wifi_event(WiFiEvent_t event, WiFiEventInfo_t info);
     /**
      * @brief Handles Bluetooth Low Energy (BLE) GAP events.
      * 
@@ -120,5 +130,20 @@ private:
      * @param param The parameters associated with the BLE GAP event.
      */
     static void ble_gap_event_handler(esp_gap_ble_cb_event_t  event, esp_ble_gap_cb_param_t* param);
+    /**
+     * @brief Sends a notification to indicate a change in the Wi-Fi status.
+     * 
+     * This function is responsible for notifying connected BLE devices
+     * about any updates or changes in the Wi-Fi status, such as
+     * connection, disconnection
+     */
+    static void notify_wifi_status_change();
+    /**
+     * @brief Sends a notification to indicate the result of Wi-Fi authentication.
+     * 
+     * This function is responsible for notifying connected BLE devices
+     * about the outcome of the Wi-Fi authentication process. It can be used
+     * to inform whether the authentication was successful, failed, or is still pending.
+     */
+    static void notify_wifi_auth_status();
 };
-

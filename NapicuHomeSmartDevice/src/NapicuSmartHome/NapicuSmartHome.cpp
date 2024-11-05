@@ -97,3 +97,9 @@ NapicuHome::WiFiState NapicuHome::get_wifi_status() {
     }
     return NapicuHome::WiFiState::WiFiNoCredentials;
 }
+
+void NapicuHome::notify_wifi_status_change() {
+    int stateValue = static_cast<int>(NapicuHome::get_wifi_status());
+    NapicuHome::wifi_state_characteristic->setValue(String(stateValue).c_str());
+    NapicuHome::wifi_state_characteristic->notify();
+}

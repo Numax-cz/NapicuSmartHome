@@ -246,9 +246,9 @@ extension BluetoothManager: CBCentralManagerDelegate {
             
             //Todo - Odstranit a veškeré init ready dát do scén.. optimalizace
             //Todo - Zde pouse pro debuggovací účely
-            if characteristic.properties.contains(.read) {
-               peripheral.readValue(for: characteristic)
-            }
+//            if characteristic.properties.contains(.read) {
+//               peripheral.readValue(for: characteristic)
+//            }
         }
     }
 
@@ -278,8 +278,10 @@ extension BluetoothManager: CBCentralManagerDelegate {
                         nearbyNetworks.append(WiFiInformations(ssid: ssid, auth_mode: auth_mode))
                     }
                 }
-                
                 connectedPeripheral?.nearbyNetworks =  nearbyNetworks
+                
+            case Config.BL_WIFI_AUTH_CHARACTERISTIC_UUID:
+                print("[WiFi] Auth - \(dataString)")
             default:
                 break
             }

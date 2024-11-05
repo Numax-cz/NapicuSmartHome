@@ -1,6 +1,5 @@
 #include <NapicuSmartHome/include/NapicuSmartHome.h>
 
-
 void NapicuHome::WiFiConnectCharacteristicCallback::onWrite(BLECharacteristic *pCharacteristic) {
     std::string received_data = pCharacteristic->getValue();
 

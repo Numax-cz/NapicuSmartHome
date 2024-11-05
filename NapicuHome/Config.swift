@@ -33,6 +33,17 @@ struct Config {
      */
     static let BL_WIFI_CONNECT_CHARACTERISTIC_UUID: CBUUID = CBUUID(string: "d193a3d7-a2f1-4961-8bd6-b7ba1df14701")
     
+    /**
+     * UUID for the Wi-Fi Authentication Status BLE Characteristic.
+     *
+     * This UUID is used to identify the BLE characteristic responsible for
+     * communicating the status of Wi-Fi authentication between the ESP32
+     * and connected BLE devices. It allows for notifications or read
+     * operations to inform the connected devices about the success or failure
+     * of the Wi-Fi authentication process.
+     */
+    static let BL_WIFI_AUTH_CHARACTERISTIC_UUID: CBUUID =  CBUUID(string: "193a3d7-a2f1-4961-8bd6-b7ba1df14701")
+    
     /*
      **************************************************************
      * Configuration parameters for device pairing functionality. *
