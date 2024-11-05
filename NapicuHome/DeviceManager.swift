@@ -50,7 +50,6 @@ class DeviceManager: ObservableObject {
                 }
             }
         }
-        
         print("Characteristic about the status of the Wi-Fi network not found.")
     }
 
@@ -63,11 +62,20 @@ class DeviceManager: ObservableObject {
                 }
             }
         }
-        
         print("Characteristic of the Wi-Fi network list not found.")
     }
     
-    func connectToWiFi(ssid: String) {
-        
+    func connectToWiFi(ssid: String, pwd: String) {
+        if let services = self.peripheral.services {
+            for service in services {
+                if let characteristic = service.characteristics?.first(where: { $0.uuid == Config.BL_WIFI_CONNECT_CHARACTERISTIC_UUID }) {
+                    if let dataToSend = "\(ssid)|\(pwd)".data(using: .utf8) {
+                           peripheral.writeValue(dataToSend, for: characteristic, type: .withResponse)
+                    }
+                    return
+                }
+            }
+        }
+        print("Characteristic of the Wi-Fi connection not found.")
     }
 }

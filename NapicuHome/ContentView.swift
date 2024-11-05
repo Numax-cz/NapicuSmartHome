@@ -199,9 +199,10 @@ struct WiFiListView: View {
                             }
                         
                         VStack {
-                            Button(action: {}) {
+                            Button(action: {
+                                deviceManager.connectToWiFi(ssid: wifi_name, pwd: wifiPasswordUserInput)
+                            }) {
                                 Text("Connect")
-                                
                                     .fontWeight(.bold)
                                     .padding()
                                     .font(
@@ -226,7 +227,7 @@ struct WiFiListView: View {
                             .foregroundStyle(wifiPasswordUserInput.count < 8 ? Color.white.opacity(0.6) : Color.white)
                             .cornerRadius(10)
                             .padding(.vertical, 2)
-                            .padding(.top, 200)
+                            .padding(.top, 10)
                         Spacer()
                     } else {
                         ScrollView {
