@@ -19,9 +19,7 @@ void NapicuHome::ble_gap_event_handler(esp_gap_ble_cb_event_t  event, esp_ble_ga
 
 
 void NapicuHome::ServerCallBack::onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param) {
-  Serial.print("Connected");
-  
-  
+  Serial.println("Connected");
 }
 
 void NapicuHome::ServerCallBack::onDisconnect(BLEServer* pServer) {

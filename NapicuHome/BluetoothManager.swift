@@ -264,10 +264,10 @@ extension BluetoothManager: CBCentralManagerDelegate {
          
             switch characteristic.uuid {
             case Config.BL_WIFI_STATE_CHARACTERISTIC_UUID:
-                print("WiFi - state")
+                print("[WiFi] State - \(dataString)")
             
             case Config.BL_WIFI_LIST_CHARACTERISTIC_UUID:
-                print("WiFi - \(dataString)")
+                print("[WiFi] List - \(dataString)")
                 
                 let parts = dataString.split(separator: ",")
                 var nearbyNetworks: [WiFiInformations] = []
@@ -280,7 +280,6 @@ extension BluetoothManager: CBCentralManagerDelegate {
                 }
                 
                 connectedPeripheral?.nearbyNetworks =  nearbyNetworks
-                
             default:
                 break
             }

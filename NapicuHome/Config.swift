@@ -25,12 +25,20 @@ struct Config {
      * Wi-Fi networks from the connected device.
      */
     static let BL_WIFI_LIST_CHARACTERISTIC_UUID: CBUUID = CBUUID(string: "fe8c0e2c-daab-4eb7-a0d1-057044d931c0")
-    
-    
     /**
-     * Configuration parameters for device pairing functionality.
-     * These settings control the timing and intervals related to
-     * device discovery, connection attempts, and status checks.
+     * Specifies the UUID used to initiate a write operation
+     * for connecting the device to a specified Wi-Fi network.
+     * This characteristic allows the client to send the SSID
+     * and password to the connected device to establish a Wi-Fi connection.
+     */
+    static let BL_WIFI_CONNECT_CHARACTERISTIC_UUID: CBUUID = CBUUID(string: "d193a3d7-a2f1-4961-8bd6-b7ba1df14701")
+    
+    /*
+     **************************************************************
+     * Configuration parameters for device pairing functionality. *
+     * These settings control the timing and intervals related to *
+     * device discovery, connection attempts, and status checks.  *
+     **************************************************************
      */
     
     /**

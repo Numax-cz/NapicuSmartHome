@@ -18,11 +18,11 @@ void setup() {
     homeSpan.setLogLevel(-1);
     NapicuHome::begin_home("11122333", Category::Lighting, "NapicuSvetlo");
 
-
     new SpanAccessory();
     new Service::AccessoryInformation();
     new Characteristic::Identify();
     new DEV_LED(2);
+
 
 }
 

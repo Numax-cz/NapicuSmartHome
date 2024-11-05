@@ -19,6 +19,13 @@
  * Wi-Fi networks from the connected device.
  */
 #define CHARACTERISTIC_WIFI_LIST_UUID "fe8c0e2c-daab-4eb7-a0d1-057044d931c0"
+/**
+ * Specifies the UUID used to initiate a write operation
+ * for connecting the device to a specified Wi-Fi network.
+ * This characteristic allows the client to send the SSID 
+ * and password to the connected device to establish a Wi-Fi connection.
+ */
+#define CHARACTERISTIC_WIFI_CONNECT_UUID "d193a3d7-a2f1-4961-8bd6-b7ba1df14701"
 
 
 //EPROM definition for storing the MAC address of the paired device 

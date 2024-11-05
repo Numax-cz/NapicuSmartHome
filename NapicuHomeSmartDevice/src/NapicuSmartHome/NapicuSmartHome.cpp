@@ -2,12 +2,17 @@
 
 
 BLEServer* NapicuHome::ble_server = nullptr;
-BLEService* NapicuHome::ble_service = nullptr;
+BLEService* NapicuHome::ble_service_wifi = nullptr;
 BLEAdvertising* NapicuHome::ble_advertising = nullptr;
 
+BLECharacteristic* NapicuHome::wifi_state_characteristic = nullptr;
+BLECharacteristic* NapicuHome::wifi_list_characteristic = nullptr;
+BLECharacteristic* NapicuHome::wifi_connect_characteristic = nullptr;
+
 void NapicuHome::begin_home(const char *pairingCode, Category catID, const char *displayName, const char *hostNameBase, const char *modelName) {
-    homeSpan.setPairingCode(pairingCode);
-    homeSpan.begin(catID, displayName, hostNameBase, modelName);
+    //homeSpan.setPairingCode(pairingCode);
+    //homeSpan.begin(catID, displayName, hostNameBase, modelName);
+
  
     WiFi.onEvent(NapicuHome::on_wifi_event);
 }
@@ -15,27 +20,37 @@ void NapicuHome::begin_home(const char *pairingCode, Category catID, const char 
 void NapicuHome::begin_ble(const char *deviceName) {
     BLEDevice::init(deviceName);
     BLEDevice::setCustomGapHandler(NapicuHome::ble_gap_event_handler);
+    
     NapicuHome::ble_server = BLEDevice::createServer();
     NapicuHome::ble_server->setCallbacks(new NapicuHome::ServerCallBack());
-    NapicuHome::ble_service = NapicuHome::ble_server->createService(SERVICE_UUID);
 
-    BLECharacteristic *wifiStateCharacteristic = NapicuHome::ble_service->createCharacteristic(
+    NapicuHome::ble_service_wifi = NapicuHome::ble_server->createService(SERVICE_UUID);
+
+    NapicuHome::wifi_state_characteristic = NapicuHome::ble_service_wifi->createCharacteristic(
         CHARACTERISTIC_WIFI_STATE_UUID,
-        BLECharacteristic::PROPERTY_READ
+        BLECharacteristic::PROPERTY_READ | //TODO: Delete
+        BLECharacteristic::PROPERTY_NOTIFY
     );
                                                  
-    wifiStateCharacteristic->setCallbacks(new NapicuHome::WiFiStateCharacteristicCallback());
+    NapicuHome::wifi_state_characteristic->setCallbacks(new NapicuHome::WiFiStateCharacteristicCallback());
 
 
-    BLECharacteristic *wifiListCharacteristic = NapicuHome::ble_service->createCharacteristic(
+    NapicuHome::wifi_list_characteristic = NapicuHome::ble_service_wifi->createCharacteristic(
         CHARACTERISTIC_WIFI_LIST_UUID,
         BLECharacteristic::PROPERTY_READ
     );
                                                  
-    wifiListCharacteristic->setCallbacks(new NapicuHome::WiFiListCharacteristicCallback());
+    NapicuHome::wifi_list_characteristic->setCallbacks(new NapicuHome::WiFiListCharacteristicCallback());
+
+    NapicuHome::wifi_connect_characteristic = NapicuHome::ble_service_wifi->createCharacteristic(
+        CHARACTERISTIC_WIFI_CONNECT_UUID,
+        BLECharacteristic::PROPERTY_WRITE
+    );
+                                                 
+    NapicuHome::wifi_connect_characteristic->setCallbacks(new NapicuHome::WiFiConnectCharacteristicCallback());
 
 
-    NapicuHome::ble_service->start();
+    NapicuHome::ble_service_wifi->start();
 
     NapicuHome::ble_advertising = BLEDevice::getAdvertising();
     NapicuHome::ble_advertising->addServiceUUID(SERVICE_UUID);

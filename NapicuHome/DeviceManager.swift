@@ -21,7 +21,6 @@ class DeviceManager: ObservableObject {
           case disconnected = 2   // ESP32 is disconnected from WiFi
       }
     
-    
 
     /**
      * Device peripherals

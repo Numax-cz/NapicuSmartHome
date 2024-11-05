@@ -112,6 +112,7 @@ struct WiFiListView: View {
                 }
             }
         
+            
             VStack {
                 Spacer()
                 Image(systemName: "wifi")
@@ -170,7 +171,6 @@ struct WiFiListView: View {
                         
                         VStack {
                             SecureField("Enter password", text: $wifiPasswordUserInput)
-                            
                                 .fontWeight(.bold)
                                 .padding()
                                 .font(
@@ -182,9 +182,6 @@ struct WiFiListView: View {
                                 )
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .focused($isPasswordFocused)
-                                .onAppear {
-                                    isPasswordFocused = true
-                                }
                             }
                             .frame(
                                 width: geometry.size.height
@@ -197,9 +194,11 @@ struct WiFiListView: View {
                             .cornerRadius(10)
                             .padding(.vertical, 2)
                             .foregroundStyle(.black)
+                            .onAppear {
+                                isPasswordFocused = true
+                            }
                         
                         VStack {
-                            
                             Button(action: {}) {
                                 Text("Connect")
                                 
@@ -227,58 +226,63 @@ struct WiFiListView: View {
                             .foregroundStyle(wifiPasswordUserInput.count < 8 ? Color.white.opacity(0.6) : Color.white)
                             .cornerRadius(10)
                             .padding(.vertical, 2)
-                            .padding(.top, 20)
+                            .padding(.top, 200)
                         Spacer()
                     } else {
                         ScrollView {
-                            VStack {
-                                ForEach(
-                                    deviceManager.nearbyNetworks, id: \.ssid
-                                ) { wifi in
-                                    Button(action: {
-                                        if(wifi.auth_mode == 0){
-                                        //TODO
-                                        } else {
-                                            selectedWiFi = wifi.ssid
-                                        }
-                                    }) {
-                                        HStack {
-                                            Text(wifi.ssid)
-                                                .fontWeight(.bold)
-                                                .padding()
-                                                .font(
-                                                    .system(
-                                                        size: geometry.size.height
+                            if deviceManager.nearbyNetworks.isEmpty {
+                                VStack {
+                                    LoadingView()
+                                }.padding(.top, 50)
+                            } else {
+                                VStack {
+                                    ForEach(
+                                        deviceManager.nearbyNetworks, id: \.ssid
+                                    ) { wifi in
+                                        Button(action: {
+                                            if(wifi.auth_mode == 0){
+                                                //TODO
+                                            } else {
+                                                selectedWiFi = wifi.ssid
+                                            }
+                                        }) {
+                                            HStack {
+                                                Text(wifi.ssid)
+                                                    .fontWeight(.bold)
+                                                    .padding()
+                                                    .font(
+                                                        .system(
+                                                            size: geometry.size.height
                                                             > geometry.size.width
                                                             ? geometry.size.width * 0.04
                                                             : geometry.size.height * 0.04))
-                                                .frame(maxWidth: .infinity, alignment: .leading)
-                                            Spacer()
-                                            Image(systemName: "lock.fill")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 20, height: 20)
-                                                .foregroundColor(wifi.auth_mode == 0 ? Color.clear :  Color.black.opacity(0.8))
-                                                .padding()
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                                Spacer()
+                                                Image(systemName: "lock.fill")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 20, height: 20)
+                                                    .foregroundColor(wifi.auth_mode == 0 ? Color.clear :  Color.black.opacity(0.8))
+                                                    .padding()
+                                            }
+                                            
                                         }
-
-                                    }
-                                    .frame(
-                                        width: geometry.size.height
+                                        .frame(
+                                            width: geometry.size.height
                                             > geometry.size.width
                                             ? geometry.size.width * 0.8
                                             : geometry.size.width * 0.8,
-                                        alignment: .leading
-                                    )
-                                   
-                                    .background(Color.black.opacity(0.1))
-                                    .cornerRadius(10)
-                                    .padding(.vertical, 2)
-                                    .foregroundStyle(.black)
+                                            alignment: .leading
+                                        )
+                                        
+                                        .background(Color.black.opacity(0.1))
+                                        .cornerRadius(10)
+                                        .padding(.vertical, 2)
+                                        .foregroundStyle(.black)
+                                    }
                                 }
+                                .padding(10)
                             }
-                            .padding(10)
-                           
                         }
                         .padding(.bottom,
                                 geometry.size.height
@@ -289,21 +293,21 @@ struct WiFiListView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.top, 10)
+                .onTapGesture {
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                }
             }
-                
         }
     }
 }
 
 struct LoadingView: View {
     @State private var spacingAnimation = true
+    @State var text: String?
 
     var body: some View {
         GeometryReader { geometry in
             VStack {
-              
-                
-
                 HStack(spacing: spacingAnimation ? CGFloat(15) : CGFloat(10)) {
                     Capsule(style: .continuous)
                         .fill(.blue)
@@ -334,16 +338,18 @@ struct LoadingView: View {
                         spacingAnimation.toggle()
                     }
                 }
+                if let text = text {
+                    HStack {
+                        Text(text)
+                            .bold()
+                            .foregroundColor(.gray.opacity(0.65))
+                            .padding(
+                                .top,
+                                geometry.size.height > geometry.size.width
+                                    ? geometry.size.width * 0.05
+                                    : geometry.size.height * 0.05)
+                    }
 
-                HStack {
-                    Text("Searching for devices...")
-                        .bold()
-                        .foregroundColor(.gray.opacity(0.65))
-                        .padding(
-                            .top,
-                            geometry.size.height > geometry.size.width
-                                ? geometry.size.width * 0.05
-                                : geometry.size.height * 0.05)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -390,7 +396,7 @@ struct ContentView: View {
                     Spacer()
 
                     if bluetoothManager.scanning && bluetoothManager.foundPeripheralsNames.isEmpty {
-                        LoadingView()
+                        LoadingView(text: "Searching for devices...")
                     } else {
                         DevicesListView(bluetoothManager: bluetoothManager)
                     }

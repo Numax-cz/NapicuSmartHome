@@ -9,6 +9,7 @@ void NapicuHome::on_wifi_event(WiFiEvent_t event) {
             break;
         case SYSTEM_EVENT_STA_DISCONNECTED:
             Serial.println("ESP32 bylo odpojeno od WiFi.");
+            WiFi.disconnect();
             break;
         default:
             break;

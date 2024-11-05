@@ -8,9 +8,6 @@
 
 
 class NapicuHome {
-
-
-
 public:
     /**
      * @brief ESP32 WiFi connection status types
@@ -44,12 +41,26 @@ public:
      * @return WiFiState 
      */
     static NapicuHome::WiFiState get_wifi_status();
-
+    /**
+     * @brief Disconnects the device from the current Wi-Fi network.
+     */
+    static void disconnect_from_wifi();
+    /**
+     * @brief Connects the device to a Wi-Fi network
+     * 
+     * @param ssid The name of the Wi-Fi network to connect to.
+     * @param pwd The password for the Wi-Fi network.
+     */
+    static void connect_to_wifi(const char* ssid, const char *pwd); //TODO return
 
 private:
     static BLEServer *ble_server;
-    static BLEService *ble_service;
+    static BLEService *ble_service_wifi;
     static BLEAdvertising *ble_advertising;
+
+    static BLECharacteristic *wifi_state_characteristic;
+    static BLECharacteristic *wifi_list_characteristic;
+    static BLECharacteristic *wifi_connect_characteristic;
 
     class ServerCallBack : public BLEServerCallbacks {
     public:
@@ -73,15 +84,41 @@ private:
         void onRead(BLECharacteristic *pCharacteristic); 
     };
     /**
-     * @brief Returns whether the data from the wifi network is saved.
+     * @brief Characteristics for connect to network
+     * 
+     */
+    class WiFiConnectCharacteristicCallback : public BLECharacteristicCallbacks {
+    public:
+        void onWrite(BLECharacteristic *pCharacteristic); 
+    };
+    /**
+     * @brief Characteristics for disconnect from network
+     * 
+     */
+    class WiFiDisconnectCharacteristicCallback : public BLECharacteristicCallbacks {
+    public:
+        void onRead(BLECharacteristic *pCharacteristic); 
+    };
+    /**
+     * @brief Returns whether the data from the wifi network is saved
      * But not if the device is connected!
      * 
      * @return true 
      * @return false 
      */
     static bool wifi_credentials_exists();
-
+    /**
+     * @brief Handles Wi-Fi events triggered by the ESP32 Wi-Fi driver
+     * 
+     * @param event Wi-Fi event
+     */
     static void on_wifi_event(WiFiEvent_t event);
+    /**
+     * @brief Handles Bluetooth Low Energy (BLE) GAP events.
+     * 
+     * @param event The BLE GAP event type.
+     * @param param The parameters associated with the BLE GAP event.
+     */
     static void ble_gap_event_handler(esp_gap_ble_cb_event_t  event, esp_ble_gap_cb_param_t* param);
 };
 
