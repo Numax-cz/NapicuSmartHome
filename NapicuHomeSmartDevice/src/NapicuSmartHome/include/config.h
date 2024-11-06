@@ -1,5 +1,5 @@
 
-// 210a69c9-eb1f-4f2a-b567-42bb92ba37cd
+// 
 // 2cc4c853-b10f-4008-ac26-4bb4a0325181
 // 946fe83f-053b-47d0-aa72-404bc5b0a47e
 // 1372c0a1-78c2-42ea-8c5b-8fe200352bab
@@ -26,16 +26,6 @@
  * and password to the connected device to establish a Wi-Fi connection.
  */
 #define CHARACTERISTIC_WIFI_CONNECT_UUID "d193a3d7-a2f1-4961-8bd6-b7ba1df14701"
-/**
- * @brief UUID for the Wi-Fi Authentication Status BLE Characteristic.
- * 
- * This UUID is used to identify the BLE characteristic responsible for
- * communicating the status of Wi-Fi authentication between the ESP32
- * and connected BLE devices. It allows for notifications or read
- * operations to inform the connected devices about the success or failure
- * of the Wi-Fi authentication process.
- */
-#define CHARACTERISTIC_WIFI_AUTH_UUID "193a3d7-a2f1-4961-8bd6-b7ba1df14701"
 
 
 //EPROM definition for storing the MAC address of the paired device 

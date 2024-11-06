@@ -14,20 +14,12 @@ public:
      * 
      */
     enum class WiFiState {
-        WiFiNoCredentials=0,    /* ESP32 has no WiFi connection data */
-        WiFiConnected=1,        /* ESP32 is connected to WiFi */
-        WiFiDisconected=2       /* ESP32 is disconnected from WiFi */
+        WiFiNoCredentials = 0,    /* ESP32 has no WiFi connection data */
+        WiFiConnected =     1,    /* ESP32 is connected to WiFi */
+        WiFiDisconected =   2,    /* ESP32 is disconnected from WiFi */
+        WiFiAuthFailed =    3,    /* Wi-Fi authentication failed (incorrect password or other issues) */
+        WiFiAuthPending =   4     /* Wi-Fi authentication is pending or in progress */
     };
-    /**
-     * @brief ESP32 Wi-Fi authentication status types
-     * 
-     */
-    enum class WiFiAuth {
-        AuthSuccess = 0,  /* Wi-Fi authentication was successful */
-        AuthFailed = 1,   /* Wi-Fi authentication failed (incorrect password or other issues) */
-        AuthPending = 2   /* Wi-Fi authentication is pending or in progress */
-    };
-
 
     /**
      * @brief Starts service for apple homekit
@@ -72,6 +64,8 @@ private:
     static BLECharacteristic *wifi_list_characteristic;
     static BLECharacteristic *wifi_connect_characteristic;
 
+    static const char *pairingCode;
+
     class ServerCallBack : public BLEServerCallbacks {
     public:
         void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param);
@@ -109,6 +103,15 @@ private:
     public:
         void onRead(BLECharacteristic *pCharacteristic); 
     };
+
+    /**
+     * @brief Starts the HomeSpan package and initializes the HomeKit setup.
+     * 
+     * This function is responsible for starting the HomeSpan package, which
+     * initializes the HomeKit framework and prepares the device to be controlled
+     * via Apple’s Home app or other HomeKit-compatible apps.
+     */
+    static void start_home_span();
     /**
      * @brief Returns whether the data from the wifi network is saved
      * But not if the device is connected!
@@ -139,11 +142,18 @@ private:
      */
     static void notify_wifi_status_change();
     /**
-     * @brief Sends a notification to indicate the result of Wi-Fi authentication.
+     * @brief Sends a notification to indicate a failed Wi-Fi authentication attempt.
      * 
-     * This function is responsible for notifying connected BLE devices
-     * about the outcome of the Wi-Fi authentication process. It can be used
-     * to inform whether the authentication was successful, failed, or is still pending.
+     * This function is responsible for notifying the connected BLE device
+     * about a failed Wi-Fi authentication. The notification will update the
+     * authentication status, indicating that the Wi-Fi authentication has
+     * failed and provide the corresponding status value.
      */
-    static void notify_wifi_auth_status();
+    static void notify_wifi_auth_failed() {
+        if(NapicuHome::wifi_state_characteristic) {
+            int auth_value = static_cast<int>(NapicuHome::WiFiState::WiFiAuthFailed);
+            NapicuHome::wifi_state_characteristic->setValue(String(auth_value).c_str());
+            NapicuHome::wifi_state_characteristic->notify();
+        }
+    }
 };

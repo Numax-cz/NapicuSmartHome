@@ -42,7 +42,7 @@ struct Config {
      * operations to inform the connected devices about the success or failure
      * of the Wi-Fi authentication process.
      */
-    static let BL_WIFI_AUTH_CHARACTERISTIC_UUID: CBUUID =  CBUUID(string: "193a3d7-a2f1-4961-8bd6-b7ba1df14701")
+    static let BL_WIFI_AUTH_CHARACTERISTIC_UUID: CBUUID =  CBUUID(string: "210a69c9-eb1f-4f2a-b567-42bb92ba37cd")
     
     /*
      **************************************************************

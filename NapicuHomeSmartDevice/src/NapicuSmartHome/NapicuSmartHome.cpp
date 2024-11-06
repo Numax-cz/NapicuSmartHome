@@ -26,28 +26,31 @@ void NapicuHome::begin_ble(const char *deviceName) {
 
     NapicuHome::ble_service_wifi = NapicuHome::ble_server->createService(SERVICE_UUID);
 
+
     NapicuHome::wifi_state_characteristic = NapicuHome::ble_service_wifi->createCharacteristic(
         CHARACTERISTIC_WIFI_STATE_UUID,
         BLECharacteristic::PROPERTY_READ | //TODO: Delete
         BLECharacteristic::PROPERTY_NOTIFY
-    );
-                                                 
+    ); 
     NapicuHome::wifi_state_characteristic->setCallbacks(new NapicuHome::WiFiStateCharacteristicCallback());
+
 
 
     NapicuHome::wifi_list_characteristic = NapicuHome::ble_service_wifi->createCharacteristic(
         CHARACTERISTIC_WIFI_LIST_UUID,
         BLECharacteristic::PROPERTY_READ
-    );
-                                                 
+    );                                     
     NapicuHome::wifi_list_characteristic->setCallbacks(new NapicuHome::WiFiListCharacteristicCallback());
+
+
 
     NapicuHome::wifi_connect_characteristic = NapicuHome::ble_service_wifi->createCharacteristic(
         CHARACTERISTIC_WIFI_CONNECT_UUID,
         BLECharacteristic::PROPERTY_WRITE
-    );
-                                                 
+    );                         
     NapicuHome::wifi_connect_characteristic->setCallbacks(new NapicuHome::WiFiConnectCharacteristicCallback());
+
+
 
 
     NapicuHome::ble_service_wifi->start();
@@ -59,6 +62,10 @@ void NapicuHome::begin_ble(const char *deviceName) {
     NapicuHome::ble_advertising->setMinPreferred(0x12);
 
     BLEDevice::startAdvertising();
+}
+
+void NapicuHome::start_home_span() {
+    
 }
 
 bool NapicuHome::wifi_credentials_exists() {
